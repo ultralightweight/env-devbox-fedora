@@ -1,0 +1,93 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# package: ultralight provisioning system
+# author: Daniel Kovacs <mondomhogynincsen@gmail.com>
+# licence: MIT <https://opensource.org/licenses/MIT>
+# file-version: 1.0
+# file-purpose: mongodb setup
+# -----------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------
+# _ups_mongodb_configure
+# -----------------------------------------------------------
+
+function _ups_mongodb_configure() {
+
+    # -----------------------------------------------------------
+    # packages
+    # -----------------------------------------------------------
+
+    SYSTEM_PACKAGES+=(
+        mongodb-org
+    )
+}
+
+
+# -----------------------------------------------------------
+# _ups_mongodb_validate
+# -----------------------------------------------------------
+
+function _ups_mongodb_validate() {
+    :
+}
+
+
+# -----------------------------------------------------------
+# _ups_mongodb_pre_install
+# -----------------------------------------------------------
+
+function _ups_mongodb_pre_install() {
+
+    # -----------------------------------------------------------
+    # write repofile
+    # -----------------------------------------------------------
+    
+    local repo_file="/etc/yum.repos.d/mongodb-org-4.0.repo"
+
+    if [[ ! -f ${repo_file} ]]; then 
+        _ups_log_info "adding mongodb repositories..."
+        cat > $repo_file <<EOF
+[Mongodb]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/4.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+EOF
+    else
+        _ups_log_notice "skip: mongodb repositories are already installed."
+    fi
+
+
+
+}
+
+
+# -----------------------------------------------------------
+# _ups_mongodb_setup
+# -----------------------------------------------------------
+
+function _ups_mongodb_setup() {
+
+    # -----------------------------------------------------------
+    # enable service
+    # -----------------------------------------------------------
+
+    _ups_log_info "enabling and starting mongdb service"
+
+    systemctl enable mongod
+    systemctl start mongod
+
+}
+
+
+# -----------------------------------------------------------
+# _ups_mongodb_verify
+# -----------------------------------------------------------
+
+function _ups_mongodb_verify() {
+    :
+}
+
+

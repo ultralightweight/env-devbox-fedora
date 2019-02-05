@@ -22,6 +22,7 @@ export PROVISIONER_ENABLED_MODULES=(
     nfs
     devtools
     devuser
+    # samba
     python
     nodejs
     docker

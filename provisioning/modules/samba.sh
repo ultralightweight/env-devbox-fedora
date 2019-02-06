@@ -51,6 +51,19 @@ function _ups_samba_setup() {
 
     cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
 
+    if [[ ! $(grep "\[system\]" /etc/samba/smb.conf) ]]; then 
+        echo "provision::install_devshare_samba: creating samba share 'system'..."
+        echo -e "
+[system]
+        comment = Root directory
+        public = yes
+        path = /
+        writeable = yes
+        create mask = 0644
+        directory mask = 0755
+        write list = root ${DEVUSER_NAME}
+" >> /etc/samba/smb.conf
+
     smbpasswd -a ${DEVUSER_NAME} -n
     (echo ${DEVUSER_PASSWORD}; echo ${DEVUSER_PASSWORD}) | smbpasswd -a ${DEVUSER_NAME}
 
@@ -59,6 +72,7 @@ function _ups_samba_setup() {
     # -----------------------------------------------------------
 
     _ups_log_info "enabling and starting samba server service..."
+    setsebool -P samba_enable_home_dirs=1
     systemctl start smb nmb
     systemctl enable smb nmb
 

@@ -53,7 +53,7 @@ function _ups_samba_setup() {
 
     if [[ ! $(grep "\[system\]" /etc/samba/smb.conf) ]]; then 
         echo "provision::install_devshare_samba: creating samba share 'system'..."
-        echo -e "
+        cat << EOF > /etc/samba/smb.conf
 [system]
         comment = Root directory
         public = yes
@@ -62,7 +62,8 @@ function _ups_samba_setup() {
         create mask = 0644
         directory mask = 0755
         write list = root ${DEVUSER_NAME}
-" >> /etc/samba/smb.conf
+EOF
+fi
 
     smbpasswd -a ${DEVUSER_NAME} -n
     (echo ${DEVUSER_PASSWORD}; echo ${DEVUSER_PASSWORD}) | smbpasswd -a ${DEVUSER_NAME}

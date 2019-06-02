@@ -3,8 +3,8 @@
 # package: ultralight provisioning system
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
-# file-version: 1.0
-# file-purpose: nfs server setup and config
+# file-version: 1.1
+# file-purpose: docker support
 # -----------------------------------------------------------------------------
 
 
@@ -62,11 +62,11 @@ function _ups_docker_setup() {
     # add dev user
     # -----------------------------------------------------------
 
-    if [[ ! -n "${DEVUSER_NAME}" ]]; then
+    if [ ! -z ${DEVUSER_NAME} ]; then
         _ups_log_info "granting permission for developer user to use docker: ${DEVUSER_NAME}"
         usermod -aG docker ${DEVUSER_NAME}
-    else:
-        _ups_log_notice "skipped: permission for developer user: \${DEVUSER_NAME} not defined, "
+    else
+        _ups_log_notice "skipped: permission for developer user: DEVUSER_NAME is not defined"
     fi
 
 }

@@ -4,7 +4,7 @@
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
 # file-version: 1.0
-# file-purpose: nfs server setup and config
+# file-purpose: RPM Fusion repo setup
 # -----------------------------------------------------------------------------
 
 

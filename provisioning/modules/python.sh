@@ -3,7 +3,7 @@
 # package: ultralight provisioning system
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
-# file-version: 1.0
+# file-version: 1.1
 # file-purpose: python environment setup
 # -----------------------------------------------------------------------------
 
@@ -15,7 +15,9 @@
 function _ups_python_configure() {
     SYSTEM_PACKAGES+=(
         python-devel
+        python2-pip
         python3-devel
+        python3-pip
     )
     PYTHON_PACKAGES+=(
         virtualenv
@@ -55,30 +57,23 @@ function _setup_python() {
     local PYTHON_MAJOR_VERSION=$1
     eval "local PIP_PACKAGES+=( \${PYTHON${PYTHON_MAJOR_VERSION}_PACKAGES[@]} )"
     eval "local PYTHON_VERSION=\${PYTHON${PYTHON_MAJOR_VERSION}_VERSION}"
-    local EASY_INSTALL=easy_install-${PYTHON_VERSION}
-    local PIP=pip${PYTHON_VERSION}
+    local PIP=$(type -p pip${PYTHON_VERSION})
 
-    _ups_log_info "setting up python version ${PYTHON_VERSION}"
+    _ups_log_info "Setting up Python version ${PYTHON_VERSION}"
 
     _ups_log_debug "PYTHON_MAJOR_VERSION=${PYTHON_MAJOR_VERSION}"
     _ups_log_debug "PYTHON_VERSION=${PYTHON_MAJOR_VERSION}"
-    _ups_log_debug "EASY_INSTALL=${PYTHON_MAJOR_VERSION}"
     _ups_log_debug "PIP=${PYTHON_MAJOR_VERSION}"
     _ups_log_debug "PIP_PACKAGES=${PYTHON_MAJOR_VERSION}"
 
     # -----------------------------------------------------------
-    # install and upgrade pip
+    # upgrade pip
     # -----------------------------------------------------------
-
-    if ! type ${PIP}; then 
-        _ups_log_info "python-${PYTHON_VERSION}: installing pip..."
-        ${EASY_INSTALL} pip
-    else
-        _ups_log_notice "skip: pip already installed."
-    fi
 
     _ups_log_info "python-${PYTHON_VERSION}: upgrading pip..."
     ${PIP} install --upgrade pip
+
+    local PIP=$(type -p pip${PYTHON_VERSION})
 
     # -----------------------------------------------------------
     # installing python packages

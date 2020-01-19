@@ -22,6 +22,7 @@ function _ups_general_configure() {
         mc
         telnet
     )
+    SYSTEM_BIN_DIR=/usr/local/bin
 }
 
 

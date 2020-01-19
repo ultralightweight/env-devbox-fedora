@@ -14,8 +14,8 @@
 
 function _ups_docker_configure() {
     SYSTEM_PACKAGES+=(
-        # docker-ce
-        docker-ce-18.06.3.ce-3.fc28
+        docker-ce
+        # docker-ce-18.06.3.ce-3.fc28
     )
 }
 

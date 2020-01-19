@@ -1,0 +1,13 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# package: ultralight provisioning system
+# author: Daniel Kovacs <mondomhogynincsen@gmail.com>
+# licence: MIT <https://opensource.org/licenses/MIT>
+# file-version: 1.3
+# file-purpose: aws session helper script
+# -----------------------------------------------------------------------------
+
+export AWS_ASSUME_ROLE_INCLUDE_PROFILE=1
+export AWS_ASSUME_ROLE=$1
+bash --rcfile ~/aws-assume-role -i
+

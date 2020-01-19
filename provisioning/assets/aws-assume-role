@@ -1,0 +1,74 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# package: ultralight provisioning system
+# author: Daniel Kovacs <mondomhogynincsen@gmail.com>
+# licence: MIT <https://opensource.org/licenses/MIT>
+# file-version: 1.3
+# file-purpose: aws assume role helper script
+# -----------------------------------------------------------------------------
+
+set -eo pipefail
+
+aws_assume_role() {
+
+local AWS_ROLE_NAME=$1
+if [[ -z "${AWS_ROLE_NAME}" ]]; then
+    echo "usage: aws-assume-role ROLE_NAME" >&2
+    return 1
+fi
+
+local AWS_SESSION_NAME=$2
+if [[ -z "${AWS_SESSION_NAME}" ]]; then
+    AWS_SESSION_NAME=session-from-${HOSTNAME}
+fi
+local AWS_ROLE_FILE=~/.aws/role_${AWS_ROLE_NAME}
+if [[ ! -f ${AWS_ROLE_FILE} ]]; then
+    echo "error: role file not found: ${AWS_ROLE_FILE}" >&2
+    return 2
+else
+    echo "creating aws session using role arn in file: ${AWS_ROLE_FILE} with session name: ${AWS_SESSION_NAME}" >&2
+fi
+local AWS_ROLE_ARN=$(cat $AWS_ROLE_FILE)
+local PY_MAKE_VARS=$(cat <<EOF
+import json, sys
+MAPPING={
+    'AccessKeyId':'AWS_ACCESS_KEY_ID', 
+    'SecretAccessKey':'AWS_SECRET_ACCESS_KEY', 
+    'SessionToken':'AWS_SESSION_TOKEN', 
+    'Expiration':'AWS_STS_EXPIRATION'
+} 
+credentials=json.load(sys.stdin)['Credentials']
+for key, name in MAPPING.items(): 
+    print('declare -x {}="{}"'.format(name, credentials[key]) )
+EOF
+)
+python -c "${PY_MAKE_VARS}" < <(aws sts assume-role --role-arn ${AWS_ROLE_ARN} --role-session-name "${AWS_SESSION_NAME}" || return 3)
+}
+
+if [[ ! -z "${AWS_ASSUME_ROLE_INCLUDE_PROFILE}" ]]; then
+source ~/.bash_profile
+fi
+
+if [[ -z "${AWS_ASSUME_ROLE}" ]]; then
+AWS_ASSUME_ROLE=$1
+fi
+
+AWS_ROLE_ENV=$(aws_assume_role ${AWS_ASSUME_ROLE})
+if [[ ! "$?" == "0" ]]; then
+    echo "error: failed to create session"
+    exit 1
+fi
+
+
+eval "${AWS_ROLE_ENV}"
+
+echo "success: session has been created and valid until: ${AWS_STS_EXPIRATION}"
+echo "type 'exit' when expired."
+echo "" 
+
+unset aws_assume_role
+unset AWS_ASSUME_ROLE
+unset AWS_ASSUME_ROLE_INCLUDE_PROFILE
+
+set +eo pipefail
+

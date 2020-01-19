@@ -3,7 +3,7 @@
 # package: ultralight provisioning system
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
-# file-version: 1.0
+# file-version: 1.1
 # file-purpose: amazon web services (aws) setup
 # -----------------------------------------------------------------------------
 
@@ -22,6 +22,17 @@ function _ups_aws_configure() {
         awscli        
     )
     AWS_CONFIG_DIR=${DEVUSER_HOME}/.aws
+    AWS_CONFIG_FILE=${AWS_CONFIG_DIR}/config
+    AWS_CREDENTIALS_FILE=${AWS_CONFIG_DIR}/credentials
+    AWS_BIN_DIR=${SYSTEM_BIN_DIR}
+    AWS_EKSCTL_DOWNLOAD_URL="https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz"
+    AWS_IAMAUTHENTICATOR_DOWNLOAD_URL=https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/aws-iam-authenticator
+    AWS_CF_WATCH_DOWNLOAD_URL="https://raw.githubusercontent.com/alestic/aws-cloudformation-stack-status/master/aws-cloudformation-stack-status"
+    AWS_HELPER_SCRIPTS=(
+        aws-assume-role
+        aws-session
+        aws-ecr-login
+    )
 }
 
 
@@ -49,13 +60,63 @@ function _ups_aws_pre_install() {
 
 function _ups_aws_setup() {
 
+
+    # -----------------------------------------------------------
+    # eksctl
+    # -----------------------------------------------------------
+
+    if ! type eksctl 2>&1 > /dev/null; then
+        _ups_log_info "installing eksctrl from: ${AWS_EKSCTL_DOWNLOAD_URL}"
+        curl -sS --location ${AWS_EKSCTL_DOWNLOAD_URL} | tar xz -C /tmp
+        mv -v /tmp/eksctl ${AWS_BIN_DIR}
+    fi
+
+
+    # -----------------------------------------------------------
+    # aws-iam-authenticator
+    # -----------------------------------------------------------
+
+    if ! type aws-iam-authenticator 2>&1 > /dev/null; then
+        _ups_log_info "installing aws-iam-authenticator from: ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}"
+        curl -sS -o aws-iam-authenticator ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}
+        chmod +x aws-iam-authenticator
+        mv -v aws-iam-authenticator ${AWS_BIN_DIR}
+    fi
+
+
+    # -----------------------------------------------------------
+    # aws-cloudformation-stack-status
+    # -----------------------------------------------------------
+
+    if ! type aws-cloudformation-stack-status 2>&1 > /dev/null; then
+        _ups_log_info "installing aws-cloudformation-stack-status from: ${AWS_CF_WATCH_DOWNLOAD_URL}"
+        curl -sS -o aws-cloudformation-stack-status ${AWS_CF_WATCH_DOWNLOAD_URL}
+        chmod +x aws-cloudformation-stack-status
+        mv -v aws-cloudformation-stack-status ${AWS_BIN_DIR}
+    fi
+
+
+    # -----------------------------------------------------------
+    # aws helper scripts
+    # -----------------------------------------------------------
+
+    local AWS_HELPER_SCRIPT=
+    for AWS_HELPER_SCRIPT in ${AWS_HELPER_SCRIPTS}; do
+        local SOURCE=${PROVISIONER_ASSETS}/${AWS_HELPER_SCRIPT}
+        local TARGET=${SYSTEM_BIN_DIR}/${AWS_HELPER_SCRIPT}
+        if ! type ${AWS_HELPER_SCRIPT} 2>&1 > /dev/null; then
+            _ups_log_info "installing ${AWS_HELPER_SCRIPT} from: ${SOURCE} to: ${TARGET}"
+            cp -vf ${SOURCE} ${TARGET}
+            chmod +x ${TARGET}
+        fi
+    done
+
+
+    # -----------------------------------------------------------
+    # config
+    # -----------------------------------------------------------
+
     mkdir -p ${AWS_CONFIG_DIR}
-
-    # -----------------------------------------------------------
-    # credentials
-    # -----------------------------------------------------------
-
-    AWS_CONFIG_FILE=${AWS_CONFIG_DIR}/config
 
     if [[ ! -f ${AWS_CONFIG_FILE} ]]; then
         _ups_log_info "writing aws config file: ${AWS_CONFIG_FILE}"
@@ -72,8 +133,6 @@ EOF
     # credentials
     # -----------------------------------------------------------
 
-    AWS_CREDENTIALS_FILE=${AWS_CONFIG_DIR}/credentials
-
     if [[ ! -f ${AWS_CREDENTIALS_FILE} ]]; then
         _ups_log_info "writing aws config file: ${AWS_CREDENTIALS_FILE}"
         cat > ${AWS_CREDENTIALS_FILE} <<EOF
@@ -85,7 +144,8 @@ EOF
     else
         _ups_log_notice "skip: aws config file already exists: ${AWS_CREDENTIALS_FILE}"
     fi
-    
+
+    chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${AWS_CONFIG_DIR}
 
 }
 
@@ -95,5 +155,18 @@ EOF
 # -----------------------------------------------------------
 
 function _ups_aws_verify() {
-    :
+    type aws
+    aws --version
+
+    type eksctl
+    eksctl version
+
+    type aws-iam-authenticator
+    aws-iam-authenticator version
+
+    for AWS_HELPER_SCRIPT in ${AWS_HELPER_SCRIPTS}; do
+        type ${AWS_HELPER_SCRIPT}
+    done
+
 }
+

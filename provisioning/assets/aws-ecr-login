@@ -1,0 +1,14 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# package: ultralight provisioning system
+# author: Daniel Kovacs <mondomhogynincsen@gmail.com>
+# licence: MIT <https://opensource.org/licenses/MIT>
+# file-version: 1.3
+# file-purpose: aws ecr login helper script
+# -----------------------------------------------------------------------------
+
+#AWS_DEFAULT_REGION=${1:-ap-southeast-2}
+AWS_DEFAULT_REGION=${1:-us-west-2}
+
+source <(aws ecr get-login --no-include-email --region ${AWS_DEFAULT_REGION})
+

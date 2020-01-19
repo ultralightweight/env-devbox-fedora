@@ -17,6 +17,15 @@ If you want to use git it is recommended that you copy or create a set of RSA ke
 
 - You can either copy your usual ssh keys under `/keys`, or generate a set of new keys. 
 
+## SSH Agent Forwarding
+
+In `/etc/ssh/ssh_config` enable SSH Agent Forwarding
+
+```
+Host *
+   ForwardAgent yes
+```
+
 ## NFS Client on the host
 
 ### OSX Host

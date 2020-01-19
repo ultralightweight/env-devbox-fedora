@@ -88,4 +88,15 @@ export NODEJS_NVM_VERSION=0.33.11
 export NODEJS_VERSION=--lts
 
 
+# -----------------------------------------------------------
+# VPN config
+# -----------------------------------------------------------
+
+export VPN_L2TP_NAME="my_vpn"
+export VPN_L2TP_HOST="my-vpn-hostname"
+export VPN_L2TP_PSK="mypskkey"
+export VPN_L2TP_USER="myusername"
+export VPN_L2TP_IPSEC_IKE=3des-sha1-modp1024
+export VPN_L2TP_IPSEC_ESP=3des-sha1
+export VPN_L2TP_IPSEC_PFS=no
 

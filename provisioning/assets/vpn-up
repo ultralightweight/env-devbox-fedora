@@ -1,0 +1,13 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# package: ultralight provisioning system
+# author: Daniel Kovacs <mondomhogynincsen@gmail.com>
+# licence: MIT <https://opensource.org/licenses/MIT>
+# file-version: 1.0
+# file-purpose: VPN Helper Script
+# -----------------------------------------------------------------------------
+
+set -eo pipefail
+
+nmcli --ask connection up ${VPN_L2TP_NAME}
+nmcli connection

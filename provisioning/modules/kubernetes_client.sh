@@ -44,7 +44,7 @@ function _ups_kubernetes_client_pre_install() {
     
     if [[ ! -f ${repo_file} ]]; then 
         _ups_log_info "writing kubernetes repository file: ${repo_file}"
-    cat > ${repo_file} <<EOF
+        cat > ${repo_file} <<EOF
 [kubernetes]
 name=Kubernetes
 baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
@@ -53,6 +53,10 @@ gpgcheck=1
 repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
+        _ups_log_info "importing repository keys..."
+        rpm --import https://packages.cloud.google.com/yum/doc/yum-key.gpg
+        rpm --import https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        rpm -qa --qf '%{VERSION}-%{RELEASE} %{SUMMARY}\n' *pubkey*
     else
         _ups_log_notice "skip: kubernetes repository already installed: ${repo_file}"
     fi

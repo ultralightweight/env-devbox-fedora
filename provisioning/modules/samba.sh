@@ -52,7 +52,7 @@ function _ups_samba_setup() {
     cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
 
     if [[ ! $(grep "\[system\]" /etc/samba/smb.conf) ]]; then 
-        echo "provision::install_devshare_samba: creating samba share 'system'..."
+        _ups_log_info "creating samba share 'system'..."
         cat << EOF > /etc/samba/smb.conf
 [system]
         comment = Root directory

@@ -3,7 +3,7 @@
 # package: ultralight provisioning system
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
-# file-version: 1.1
+# file-version: 1.2
 # file-purpose: python environment setup
 # -----------------------------------------------------------------------------
 
@@ -13,21 +13,24 @@
 # -----------------------------------------------------------
 
 function _ups_python_configure() {
-    SYSTEM_PACKAGES+=(
-        python-devel
-        python2-pip
-        python3-devel
-        python3-pip
-    )
     PYTHON_PACKAGES+=(
         virtualenv
     )
 
-    PYTHON2_VERSION=${PYTHON2_VERSION:-2.7}
-    PYTHON3_VERSION=${PYTHON3_VERSION:-3.6}
+    PYTHON2_VERSION=${PYTHON2_VERSION:-2}
+    PYTHON3_VERSION=${PYTHON3_VERSION:-3}
 
     PYTHON2_PACKAGES+=( ${PYTHON_PACKAGES[@]} )
     PYTHON3_PACKAGES+=( ${PYTHON_PACKAGES[@]} )
+
+    SYSTEM_PACKAGES+=(
+        python${PYTHON2_VERSION}-devel
+        python${PYTHON2_VERSION}-pip
+        python${PYTHON3_VERSION}-devel
+        python${PYTHON3_VERSION}-pip
+    )
+
+
 }
 
 
@@ -105,5 +108,8 @@ function _ups_python_setup() {
 # -----------------------------------------------------------
 
 function _ups_python_verify() {
-    :
+    type python2
+    python2 --version
+    type python3
+    python3 --version
 }

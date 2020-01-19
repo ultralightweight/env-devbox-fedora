@@ -146,6 +146,7 @@ if [ "${PROVISIONER_ROOT}" == "/tmp" ]; then
     PROVISIONER_ROOT=/vagrant/provisioning
 fi
 PROVISIONER_LOADED_MODULES=()
+PROVISIONER_ASSETS=${PROVISIONER_ROOT}/assets
 
 
 # -----------------------------------------------------------

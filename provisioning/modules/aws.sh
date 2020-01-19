@@ -101,7 +101,7 @@ function _ups_aws_setup() {
     # -----------------------------------------------------------
 
     local AWS_HELPER_SCRIPT=
-    for AWS_HELPER_SCRIPT in ${AWS_HELPER_SCRIPTS}; do
+    for AWS_HELPER_SCRIPT in ${AWS_HELPER_SCRIPTS[@]}; do
         local SOURCE=${PROVISIONER_ASSETS}/${AWS_HELPER_SCRIPT}
         local TARGET=${SYSTEM_BIN_DIR}/${AWS_HELPER_SCRIPT}
         if ! type ${AWS_HELPER_SCRIPT} 2>&1 > /dev/null; then
@@ -164,7 +164,7 @@ function _ups_aws_verify() {
     type aws-iam-authenticator
     aws-iam-authenticator version
 
-    for AWS_HELPER_SCRIPT in ${AWS_HELPER_SCRIPTS}; do
+    for AWS_HELPER_SCRIPT in ${AWS_HELPER_SCRIPTS[@]}; do
         type ${AWS_HELPER_SCRIPT}
     done
 

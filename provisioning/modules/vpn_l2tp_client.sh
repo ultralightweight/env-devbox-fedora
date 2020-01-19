@@ -115,7 +115,7 @@ function _ups_vpn_l2tp_client_setup() {
     fi
 
     local SCRIPT=
-    for SCRIPT in ${VPN_L2TP_CLIENT_HELPER_SCRIPTS}; do
+    for SCRIPT in ${VPN_L2TP_CLIENT_HELPER_SCRIPTS[@]}; do
         local SOURCE=${PROVISIONER_ASSETS}/${SCRIPT}
         local TARGET=~/${SCRIPT}
         if [[ ! -f TARGET ]]; then

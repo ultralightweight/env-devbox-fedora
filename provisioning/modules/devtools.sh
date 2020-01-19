@@ -17,6 +17,12 @@ function _ups_devtools_configure() {
         git
         tig
         gcc
+        make
+        psmisc
+        htop
+        lsof
+        strace
+        
     )
 }
 

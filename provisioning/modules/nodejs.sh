@@ -70,6 +70,9 @@ function _ups_nodejs_setup() {
 # -----------------------------------------------------------
 
 function _ups_nodejs_verify() {
-    :
+    type node
+    node --version
+    type npm
+    npm --version
 }
 

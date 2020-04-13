@@ -28,6 +28,7 @@ export PROVISIONER_ENABLED_MODULES=(
     docker
     aws
     gae
+    kubernetes_minikube
     # devproject
 )
 

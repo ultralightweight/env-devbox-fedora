@@ -65,7 +65,7 @@ function _ups_aws_setup() {
     # eksctl
     # -----------------------------------------------------------
 
-    if ! type eksctl 2>&1 > /dev/null; then
+    if ! type eksctl >/dev/null 2>&1; then
         _ups_log_info "installing eksctrl from: ${AWS_EKSCTL_DOWNLOAD_URL}"
         curl -sS --location ${AWS_EKSCTL_DOWNLOAD_URL} | tar xz -C /tmp
         mv -v /tmp/eksctl ${AWS_BIN_DIR}
@@ -76,7 +76,7 @@ function _ups_aws_setup() {
     # aws-iam-authenticator
     # -----------------------------------------------------------
 
-    if ! type aws-iam-authenticator 2>&1 > /dev/null; then
+    if ! type aws-iam-authenticator >/dev/null 2>&1; then
         _ups_log_info "installing aws-iam-authenticator from: ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}"
         curl -sS -o aws-iam-authenticator ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}
         chmod +x aws-iam-authenticator
@@ -88,7 +88,7 @@ function _ups_aws_setup() {
     # aws-cloudformation-stack-status
     # -----------------------------------------------------------
 
-    if ! type aws-cloudformation-stack-status 2>&1 > /dev/null; then
+    if ! type aws-cloudformation-stack-status >/dev/null 2>&1; then
         _ups_log_info "installing aws-cloudformation-stack-status from: ${AWS_CF_WATCH_DOWNLOAD_URL}"
         curl -sS -o aws-cloudformation-stack-status ${AWS_CF_WATCH_DOWNLOAD_URL}
         chmod +x aws-cloudformation-stack-status
@@ -104,7 +104,7 @@ function _ups_aws_setup() {
     for AWS_HELPER_SCRIPT in ${AWS_HELPER_SCRIPTS[@]}; do
         local SOURCE=${PROVISIONER_ASSETS}/${AWS_HELPER_SCRIPT}
         local TARGET=${SYSTEM_BIN_DIR}/${AWS_HELPER_SCRIPT}
-        if ! type ${AWS_HELPER_SCRIPT} 2>&1 > /dev/null; then
+        if ! type ${AWS_HELPER_SCRIPT} >/dev/null 2>&1; then
             _ups_log_info "installing ${AWS_HELPER_SCRIPT} from: ${SOURCE} to: ${TARGET}"
             cp -vf ${SOURCE} ${TARGET}
             chmod +x ${TARGET}

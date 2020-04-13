@@ -74,7 +74,7 @@ function _ups_kubernetes_client_setup() {
     # helm
     # -----------------------------------------------------------
 
-    if ! type helm 2>&1 > /dev/null; then
+    if ! type helm >/dev/null 2>&1; then
         _ups_log_info "installing helm from: ${KUBERNETES_CLIENT_HELM_DOWNLOAD_URL}"
         # curl -sS -o /tmp/helm.tar.gz ${KUBERNETES_CLIENT_HELM_DOWNLOAD_URL}
         mkdir -p /tmp/helm

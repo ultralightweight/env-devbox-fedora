@@ -70,6 +70,20 @@ function _ups_docker_setup() {
         _ups_log_notice "skipped: permission for developer user: DEVUSER_NAME is not defined"
     fi
 
+    if grep "31" /etc/fedora-release >/dev/null 2>&1; then 
+        if ! grep "systemd.unified_cgroup_hierarchy" /etc/default/grub >/dev/null 2>&1; then
+            _ups_log_info "Reverting system to use cgroups 1 (docker doesn't yet support cgroups2)"
+            cp -vf /etc/default/grub /etc/default/grub.bak
+            sed -i '/^GRUB_CMDLINE_LINUX/ s/"$/ systemd.unified_cgroup_hierarchy=0"/' /etc/default/grub
+            _ups_log_info "Re-writing bootloader config... Please RESTART machine to be able to use docker."
+            if ls /sys/firmware/efi >/dev/null 2>&1; then
+                sudo grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
+            else
+                sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+            fi
+        fi
+    fi
+
 }
 
 

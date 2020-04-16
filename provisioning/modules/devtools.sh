@@ -22,7 +22,7 @@ function _ups_devtools_configure() {
         htop
         lsof
         strace
-        
+        jq
     )
 }
 

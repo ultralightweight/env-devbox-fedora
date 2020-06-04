@@ -34,7 +34,13 @@ function _ups_kubernetes_minikube_validate() {
 # -----------------------------------------------------------
 
 function _ups_kubernetes_minikube_pre_install() {
-    :
+
+    _ups_log_info "importing GPG keys for Google Package Repositories..."
+    rpm --verbose --import https://packages.cloud.google.com/apt/doc/rpm-package-key.gpg
+    rpmkeys --verbose --import https://packages.cloud.google.com/apt/doc/rpm-package-key.gpg
+    rpm --verbose --import https://packages.cloud.google.com/apt/doc/yum-key.gpg
+    rpmkeys --verbose --import https://packages.cloud.google.com/apt/doc/yum-key.gpg
+
 }
 
 

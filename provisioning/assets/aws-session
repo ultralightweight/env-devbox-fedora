@@ -9,5 +9,5 @@
 
 export AWS_ASSUME_ROLE_INCLUDE_PROFILE=1
 export AWS_ASSUME_ROLE=$1
-bash --rcfile ~/aws-assume-role -i
+bash --rcfile aws-assume-role -i
 

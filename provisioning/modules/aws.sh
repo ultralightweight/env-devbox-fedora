@@ -103,7 +103,7 @@ function _ups_aws_setup() {
     local AWS_HELPER_SCRIPT=
     for AWS_HELPER_SCRIPT in ${AWS_HELPER_SCRIPTS[@]}; do
         local SOURCE=${PROVISIONER_ASSETS}/${AWS_HELPER_SCRIPT}
-        local TARGET=${SYSTEM_BIN_DIR}/${AWS_HELPER_SCRIPT}
+        local TARGET=${AWS_BIN_DIR}/${AWS_HELPER_SCRIPT}
         if ! type ${AWS_HELPER_SCRIPT} >/dev/null 2>&1; then
             _ups_log_info "installing ${AWS_HELPER_SCRIPT} from: ${SOURCE} to: ${TARGET}"
             cp -vf ${SOURCE} ${TARGET}

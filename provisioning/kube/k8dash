@@ -1,0 +1,12 @@
+# Create the service account in the current namespace (we assume default)
+kubectl create --namespace kube-system serviceaccount k8dash-sa
+
+# Give that service account root on the cluster
+kubectl create --namespace kube-system clusterrolebinding k8dash-sa --clusterrole=cluster-admin --serviceaccount=kube-system:k8dash-sa
+
+# Find the secret that was created to hold the token for the SA
+kubectl --namespace kube-system get secrets
+
+# Show the contents of the secret to extract the token
+kubectl --namespace kube-system describe secret k8dash-sa-token-xxxxx
+

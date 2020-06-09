@@ -17,6 +17,7 @@ function _ups_kubernetes_minikube_configure() {
     )
     KUBERNETES_MINIKUBE_DOWNLOAD_URL="https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
     KUBERNETES_MINIKUBE_BIN_DIR=${SYSTEM_BIN_DIR}
+    SYSTEM_SWAP_SIZE=${SYSTEM_SWAP_SIZE:-5000}
 }
 
 
@@ -60,7 +61,6 @@ function _ups_kubernetes_minikube_setup() {
         chmod +x /tmp/minikube
         mv -v /tmp/minikube ${KUBERNETES_MINIKUBE_BIN_DIR}
     fi
-
 }
 
 

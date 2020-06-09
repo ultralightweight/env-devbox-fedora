@@ -23,6 +23,8 @@ function _ups_general_configure() {
         telnet
     )
     SYSTEM_BIN_DIR=/usr/local/bin
+    SYSTEM_SWAP_FILE=${SYSTEM_SWAP_FILE:-/swap}
+    SYSTEM_SWAP_SIZE=${SYSTEM_SWAP_SIZE:-}
 }
 
 
@@ -56,7 +58,7 @@ function _ups_general_setup() {
 
     _ups_log_info "installing system packages..."
     _ups_log_debug "SYSTEM_PACKAGES: ${SYSTEM_PACKAGES[*]}"
-    dnf install -y ${SYSTEM_PACKAGES[*]}
+    dnf install -y --nogpgcheck ${SYSTEM_PACKAGES[*]}
 
 
     # -----------------------------------------------------------
@@ -66,6 +68,26 @@ function _ups_general_setup() {
     _ups_log_info "setting timezone to: ${SYSTEM_TIMEZONE}"
     timedatectl set-timezone ${SYSTEM_TIMEZONE}
     timedatectl set-ntp true
+
+
+    # -----------------------------------------------------------
+    # swap
+    # -----------------------------------------------------------
+    if [[ ! -z "${SYSTEM_SWAP_SIZE}" && ! -z "${SYSTEM_SWAP_FILE}" ]]; then
+        _ups_log_info "enabling swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
+        if [[ ! -f "${SYSTEM_SWAP_FILE}" ]]; then
+            _ups_log_info "creating swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
+            dd if=/dev/zero of=${SYSTEM_SWAP_FILE} bs=1M count=5000
+            chown root:root ${SYSTEM_SWAP_FILE}
+            chmod 600 ${SYSTEM_SWAP_FILE}
+            mkswap ${SYSTEM_SWAP_FILE}
+            swapon ${SYSTEM_SWAP_FILE}
+        fi
+        if ! grep "${SYSTEM_SWAP_FILE}" /etc/fstab 2>&1 > /dev/null; then
+            _ups_log_info "appending swap file to fstab..."
+            echo "${SYSTEM_SWAP_FILE} swap                                                        swap    defaults        0 0" >> /etc/fstab
+        fi
+    fi
 
 }
 

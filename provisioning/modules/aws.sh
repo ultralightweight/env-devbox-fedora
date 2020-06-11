@@ -19,7 +19,8 @@ function _ups_aws_configure() {
         boto
     )
     PYTHON3_PACKAGES+=(
-        awscli        
+        awscli
+        aws-sam-cli
     )
     AWS_CONFIG_DIR=${DEVUSER_HOME}/.aws
     AWS_CONFIG_FILE=${AWS_CONFIG_DIR}/config

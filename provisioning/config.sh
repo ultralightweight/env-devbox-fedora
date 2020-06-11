@@ -9,44 +9,92 @@
 
 
 # -----------------------------------------------------------
-# provisioner config
+# module config
 # -----------------------------------------------------------
+#
+# Please uncomment required module
+#
 
-#
-# Enabled modules 
-#
 export PROVISIONER_ENABLED_MODULES=(
+    # ---------------------------
+    # generic modules
+    # ---------------------------
     general
     # repo_epel
     repo_rpmfusion
+
+    # ---------------------------
+    # file sharing modules
+    # ---------------------------
     nfs
-    devtools
-    devuser
     # samba
-    python
-    nodejs
-    docker
-    aws
-    gae
-    kubernetes_minikube
+
+    # ---------------------------
+    # developer user and tools
+    # ---------------------------
+    devuser
+    devtools
     # devproject
+
+    # ---------------------------
+    # programming languages
+    # ---------------------------
+    python
+    # golang
+    # nodejs
+
+    # ---------------------------
+    # databases
+    # ---------------------------
+    # mongodb
+    # mongotron
+
+    # ---------------------------
+    # container support
+    # ---------------------------
+    # docker
+    # lxc
+
+    # ---------------------------
+    # cloud support
+    # ---------------------------
+    # aws
+    # gae
+    # terraform
+
+    # ---------------------------
+    # kubernetes support
+    # ---------------------------
+    # kubernetes_client
+    # kubernetes_minikube
+
+    # ---------------------------
+    # vpn support
+    # ---------------------------
+    # vpn_l2tp_client
+    # vpn_tinc
 )
 
 
 # -----------------------------------------------------------
-# system level config
+# time-zone configuration
 # -----------------------------------------------------------
-
 #
 # Set the timezone for the VM
 #
+
 # export SYSTEM_TIMEZONE=Australia/Sydney
 export SYSTEM_TIMEZONE=UTC
 
 
+# -----------------------------------------------------------
+# system packages config
+# -----------------------------------------------------------
 #
-# Define extra packages here
+# Define extra packages here, these will be installed using
+# dnf / apt, based on which platform is used.
 #
+
 export SYSTEM_PACKAGES=(
 )
 
@@ -72,6 +120,7 @@ export AWS_CONFIG_DEFAULT_FORMAT=json
 
 export AWS_CREDENTIALS_ACCESS_KEY_ID=
 export AWS_CREDENTIALS_SECRED_ACCESS_KEY=
+
 
 # -----------------------------------------------------------
 # python config

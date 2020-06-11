@@ -25,6 +25,9 @@ function _ups_general_configure() {
     SYSTEM_BIN_DIR=/usr/local/bin
     SYSTEM_SWAP_FILE=${SYSTEM_SWAP_FILE:-/swap}
     SYSTEM_SWAP_SIZE=${SYSTEM_SWAP_SIZE:-}
+    SYSTEM_HELPER_SCRIPTS=(
+        timesync
+    )
 }
 
 
@@ -74,7 +77,7 @@ function _ups_general_setup() {
     # swap
     # -----------------------------------------------------------
     if [[ ! -z "${SYSTEM_SWAP_SIZE}" && ! -z "${SYSTEM_SWAP_FILE}" ]]; then
-        _ups_log_info "enabling swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
+        _ups_log_info "configuring swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
         if [[ ! -f "${SYSTEM_SWAP_FILE}" ]]; then
             _ups_log_info "creating swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
             dd if=/dev/zero of=${SYSTEM_SWAP_FILE} bs=1M count=5000
@@ -88,6 +91,21 @@ function _ups_general_setup() {
             echo "${SYSTEM_SWAP_FILE} swap                                                        swap    defaults        0 0" >> /etc/fstab
         fi
     fi
+
+    # -----------------------------------------------------------
+    # generic helper scripts
+    # -----------------------------------------------------------
+
+    local SYSTEM_HELPER_SCRIPT=
+    for SYSTEM_HELPER_SCRIPT in ${SYSTEM_HELPER_SCRIPTS[@]}; do
+        local SOURCE=${PROVISIONER_ASSETS}/${SYSTEM_HELPER_SCRIPT}
+        local TARGET=${SYSTEM_BIN_DIR}/${SYSTEM_HELPER_SCRIPT}
+        if ! type ${SYSTEM_HELPER_SCRIPT} >/dev/null 2>&1; then
+            _ups_log_info "installing ${SYSTEM_HELPER_SCRIPT} from: ${SOURCE} to: ${TARGET}"
+            cp -vf ${SOURCE} ${TARGET}
+            chmod +x ${TARGET}
+        fi
+    done
 
 }
 

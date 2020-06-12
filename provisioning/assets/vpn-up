@@ -9,5 +9,6 @@
 
 set -eo pipefail
 
+killall pluto > /dev/null 2>&1 || true
 nmcli --ask connection up ${VPN_L2TP_NAME}
 nmcli connection

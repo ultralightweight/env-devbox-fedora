@@ -9,5 +9,6 @@
 
 set -eo pipefail
 
-nmcli connection down ${VPN_L2TP_NAME}
+nmcli connection down ${VPN_L2TP_NAME} || true
 nmcli connection
+killall pluto > /dev/null 2>&1 || true

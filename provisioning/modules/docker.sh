@@ -94,7 +94,7 @@ function _ups_docker_setup() {
 function _ups_docker_verify() {
     type docker
     docker --version
-    if ! mount | grep "cgroup " >/dev/null 2>&1; then
-        _ups_log_error "ERROR: cgroup1 is not available. If this is your first provisioning run, PLEASE RESTART to let the cgroup1 enabling command to take effect."
+    if ! mount | grep "cgroup on" >/dev/null 2>&1; then
+        _ups_log_error "ERROR: cgroup1 is not available. If this is your first provisioning run, PLEASE RESTART to let kernel config changes take effect."
     fi
 }

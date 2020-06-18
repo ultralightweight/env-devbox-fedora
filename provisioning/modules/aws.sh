@@ -117,6 +117,8 @@ function _ups_aws_setup() {
     # config
     # -----------------------------------------------------------
 
+    _ups_log_info "setting up aws configuration and credentials..."
+
     mkdir -p ${AWS_CONFIG_DIR}
 
     if [[ ! -f ${AWS_CONFIG_FILE} ]]; then
@@ -130,23 +132,37 @@ EOF
         _ups_log_notice "skip: aws config file already exists: ${AWS_CONFIG_FILE}"
     fi
 
+
     # -----------------------------------------------------------
-    # credentials
+    # aws credentials
     # -----------------------------------------------------------
 
-    if [[ ! -f ${AWS_CREDENTIALS_FILE} ]]; then
-        _ups_log_info "writing aws config file: ${AWS_CREDENTIALS_FILE}"
-        cat > ${AWS_CREDENTIALS_FILE} <<EOF
-[default]
-aws_access_key_id = ${AWS_CREDENTIALS_ACCESS_KEY_ID}
-aws_secret_access_key = ${AWS_CREDENTIALS_SECRED_ACCESS_KEY}
-
-EOF
+    if [[ -d ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws ]]; then
+        _ups_log_info "copying aws credential files..."
+        cp -rv ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/. ${AWS_CONFIG_DIR}/
+        rm -fv ${AWS_CONFIG_DIR}/.placeholder
     else
-        _ups_log_notice "skip: aws config file already exists: ${AWS_CREDENTIALS_FILE}"
+        _ups_log_warning "no aws credentials found in: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/"
     fi
 
-    chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${AWS_CONFIG_DIR}
+    chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${DEVUSER_HOME}/.aws
+    chmod 600 ${AWS_CONFIG_DIR}/*
+
+
+    # -----------------------------------------------------------
+    # role files
+    # -----------------------------------------------------------
+
+    # mkdir -p ${DEVUSER_HOME}/.ssh
+
+    # if [[ -d /vagrant/keys ]]; then
+    #     _ups_log_info "copying ssh keys..."
+    #     cp -v /vagrant/keys/* ${DEVUSER_HOME}/.ssh/
+    # else
+    #     _ups_log_warning "ssh keys are not found in the /vagrant/keys directory." >&2
+    # fi
+
+    # chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${AWS_CONFIG_DIR}
 
 }
 

@@ -3,11 +3,18 @@
 # package: ultralight provisioning system
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
-# file-version: 1.15
+# file-version: 1.16
 # file-purpose: provisioner configuration
 # -----------------------------------------------------------------------------
 
 set -e
+
+# -----------------------------------------------------------
+# provisioner.sh version
+# -----------------------------------------------------------
+
+PROVISIONER_VERSION=1.16
+
 
 # -----------------------------------------------------------
 # Debugging
@@ -30,17 +37,23 @@ function _strict-mode() {
 
 
 # ------------------------------------------------
-# debug-logstack()
+# _psh_print_traceback()
 # ------------------------------------------------
 
-function debug-logstack() {
+function _psh_print_traceback() {
   local i=0
   local FRAMES=${#BASH_LINENO[@]}
-  # FRAMES-2 skips main, the last one in arrays
+  echo "-----------------------------------------------------" >&2
+  echo "Traceback (most recent call last):" >&2
+  # FRAMES-2 skips the exception trap logs
   for ((i=FRAMES-2; i>=0; i--)); do
-    echo "  File \"${BASH_SOURCE[i+1]}\", line ${BASH_LINENO[i]}, in ${FUNCNAME[i+1]}"
-    # Grab the source code of the line
-    sed "${BASH_LINENO[i]}q;d" "${BASH_SOURCE[i+1]}"
+    echo "  File \"${BASH_SOURCE[i+1]}\", line ${BASH_LINENO[i]}, in ${FUNCNAME[i+1]}" >&2
+    # Grab the source code of the line"
+    if (( i > 0 )); then
+        sed "${BASH_LINENO[i]}q;d" "${BASH_SOURCE[i+1]}" | sed 's/^ */    /g' >&2
+    else
+        echo "    ${BASH_COMMAND}" >&2
+    fi
   done
 }
 
@@ -52,10 +65,11 @@ function debug-logstack() {
 if [[ ! -n "${EXCEPTION_TRAP_DISABLED+x}" || -z ${EXCEPTION_TRAP_DISABLED} ]]; then
     trap 'EXIT_CODE=$?
         COMMAND=${BASH_COMMAND}
-        #echo "libutils.sh: exit trap: ${COMMAND} exit: ${EXIT_CODE}"
+        #echo "provisioner.sh: exit trap: ${COMMAND} exit: ${EXIT_CODE}"
         if (( $EXIT_CODE != 0 && $EXIT_CODE != 100 )); then 
-            debug-logstack
-            echo -e "\nerror: command \`$COMMAND\` returned $EXIT_CODE${NEWLINE}"
+            _psh_print_traceback
+            echo -e "\nerror: command \`$COMMAND\` returned $EXIT_CODE" >&2
+            echo "   " >&2
         fi
         exit $EXIT_CODE
         ' EXIT
@@ -147,6 +161,12 @@ if [ "${PROVISIONER_ROOT}" == "/tmp" ]; then
 fi
 PROVISIONER_LOADED_MODULES=()
 PROVISIONER_ASSETS=${PROVISIONER_ROOT}/assets
+PROVISIONER_DEFAULT_CONFIG_FILE=${PROVISIONER_ROOT}/default_config.sh
+
+export PROVISIONER_CONFIG_ROOT=/vagrant
+export PROVISIONER_CONFIG_ASSETS_ROOT=${PROVISIONER_CONFIG_ROOT}/assets
+export PROVISIONER_CONFIG_CREDENTIALS_ROOT=${PROVISIONER_CONFIG_ROOT}/credentials
+export PROVISIONER_CONFIG_FILE=${PROVISIONER_CONFIG_ROOT}/config.sh
 
 
 # -----------------------------------------------------------
@@ -225,7 +245,20 @@ function _ups_execute_phase() {
 # load config
 # -----------------------------------------------------------
 
-. /vagrant/provisioning/config.sh
+_ups_log_info "============================================================================"
+_ups_log_info "Provisioner.sh version ${PROVISIONER_VERSION} initializing..."
+_ups_log_info "============================================================================"
+
+_ups_log_info "Loading default configuration: ${PROVISIONER_DEFAULT_CONFIG_FILE}"
+. ${PROVISIONER_DEFAULT_CONFIG_FILE}
+
+_ups_log_debug "PROVISIONER_CONFIG_ROOT: ${PROVISIONER_CONFIG_ROOT}"
+_ups_log_debug "PROVISIONER_CONFIG_FILE: ${PROVISIONER_CONFIG_FILE}"
+_ups_log_debug "PROVISIONER_CONFIG_ASSETS_ROOT: ${PROVISIONER_CONFIG_ASSETS_ROOT}"
+_ups_log_debug "PROVISIONER_CONFIG_CREDENTIALS_ROOT: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}"
+
+_ups_log_info "Loading configuration file: ${PROVISIONER_CONFIG_FILE}"
+. ${PROVISIONER_CONFIG_FILE}
 
 
 # -----------------------------------------------------------

@@ -52,7 +52,7 @@ function _ups_devuser_setup() {
         useradd -u ${DEVUSER_UID} -g ${DEVUSER_GID} ${DEVUSER_NAME}
         echo -e "${DEVUSER_NAME}\tALL=(ALL)\tNOPASSWD: ALL" >> /etc/sudoers
     else
-        _ups_log_notice "skip: dev user already exists" >&2
+        _ups_log_notice "skip: dev user already exists"
     fi
     echo "${DEVUSER_NAME}:${DEVUSER_PASSWORD}" | chpasswd
 
@@ -65,18 +65,19 @@ function _ups_devuser_setup() {
 
     mkdir -p ${DEVUSER_HOME}/.ssh
 
-    if [[ -d /vagrant/keys ]]; then
-        _ups_log_info "copying ssh keys..."
-        cp -v /vagrant/keys/* ${DEVUSER_HOME}/.ssh/
+    if [[ -d ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/ssh ]]; then
+        _ups_log_info "copying ssh configuration ..."
+        cp -rv "${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/ssh/." ${DEVUSER_HOME}/.ssh/
+        rm -fv ${DEVUSER_HOME}/.ssh/.placeholder
     else
-        _ups_log_warning "ssh keys are not found in the /vagrant/keys directory." >&2
+        _ups_log_warning "no ssh configuration found in: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/ssh/"
     fi
 
     if [[ ! -f ${DEVUSER_HOME}/.ssh/authorized_keys ]]; then
         _ups_log_info "configuring authorized_keys..."
         cp /home/vagrant/.ssh/authorized_keys ${DEVUSER_HOME}/.ssh/authorized_keys
     else
-        _ups_log_warning "sktip: authorized_keys already exists" >&2
+        _ups_log_warning "sktip: authorized_keys already exists"
     fi
 
     chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${DEVUSER_HOME}/.ssh

@@ -90,17 +90,16 @@ EOF
     _ups_log_info "Enabling and starting NetworkManager..."
     systemctl start NetworkManager
     systemctl enable NetworkManager
-    
-    _ups_log_info "VPN_L2TP_NAME=${VPN_L2TP_NAME}"
-    _ups_log_info "VPN_L2TP_HOST=${VPN_L2TP_HOST}"
-    _ups_log_info "VPN_L2TP_PSK=${VPN_L2TP_PSK}"
-    _ups_log_info "VPN_L2TP_USER=${VPN_L2TP_USER}"
-    _ups_log_info "VPN_L2TP_IPSEC_IKE=${VPN_L2TP_IPSEC_IKE}"
-    _ups_log_info "VPN_L2TP_IPSEC_ESP=${VPN_L2TP_IPSEC_ESP}"
-    _ups_log_info "VPN_L2TP_IPSEC_PFS=${VPN_L2TP_IPSEC_PFS}"
 
     if ! nmcli connection show ${VPN_L2TP_NAME} > /dev/null 2>&1; then
         _ups_log_info "Creating connection '${VPN_L2TP_NAME}'..."
+        _ups_log_info "VPN_L2TP_NAME=${VPN_L2TP_NAME}"
+        _ups_log_info "VPN_L2TP_HOST=${VPN_L2TP_HOST}"
+        _ups_log_info "VPN_L2TP_PSK=${VPN_L2TP_PSK}"
+        _ups_log_info "VPN_L2TP_USER=${VPN_L2TP_USER}"
+        _ups_log_info "VPN_L2TP_IPSEC_IKE=${VPN_L2TP_IPSEC_IKE}"
+        _ups_log_info "VPN_L2TP_IPSEC_ESP=${VPN_L2TP_IPSEC_ESP}"
+        _ups_log_info "VPN_L2TP_IPSEC_PFS=${VPN_L2TP_IPSEC_PFS}"
         nmcli connection add \
             connection.id ${VPN_L2TP_NAME} \
             con-name ${VPN_L2TP_NAME} \

@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_general_configure
+# _psh_general_configure
 # -----------------------------------------------------------
 
-function _ups_general_configure() {
+function _psh_general_configure() {
     SYSTEM_PACKAGES+=(
         curl
         wget
@@ -32,35 +32,35 @@ function _ups_general_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_general_validate
+# _psh_general_validate
 # -----------------------------------------------------------
 
-function _ups_general_validate() {
+function _psh_general_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_general_pre_install
+# _psh_general_pre_install
 # -----------------------------------------------------------
 
-function _ups_general_pre_install() {
+function _psh_general_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_general_setup
+# _psh_general_setup
 # -----------------------------------------------------------
 
-function _ups_general_setup() {
+function _psh_general_setup() {
 
     # -----------------------------------------------------------
     # install packages
     # -----------------------------------------------------------
 
-    _ups_log_info "installing system packages..."
-    _ups_log_debug "SYSTEM_PACKAGES: ${SYSTEM_PACKAGES[*]}"
+    _psh_log_info "installing system packages..."
+    _psh_log_debug "SYSTEM_PACKAGES: ${SYSTEM_PACKAGES[*]}"
     dnf install -y --nogpgcheck ${SYSTEM_PACKAGES[*]}
 
 
@@ -68,7 +68,7 @@ function _ups_general_setup() {
     # timezone
     # -----------------------------------------------------------
 
-    _ups_log_info "setting timezone to: ${SYSTEM_TIMEZONE}"
+    _psh_log_info "setting timezone to: ${SYSTEM_TIMEZONE}"
     timedatectl set-timezone ${SYSTEM_TIMEZONE}
     timedatectl set-ntp true
 
@@ -77,9 +77,9 @@ function _ups_general_setup() {
     # swap
     # -----------------------------------------------------------
     if [[ ! -z "${SYSTEM_SWAP_SIZE}" && ! -z "${SYSTEM_SWAP_FILE}" ]]; then
-        _ups_log_info "configuring swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
+        _psh_log_info "configuring swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
         if [[ ! -f "${SYSTEM_SWAP_FILE}" ]]; then
-            _ups_log_info "creating swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
+            _psh_log_info "creating swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
             dd if=/dev/zero of=${SYSTEM_SWAP_FILE} bs=1M count=5000
             chown root:root ${SYSTEM_SWAP_FILE}
             chmod 600 ${SYSTEM_SWAP_FILE}
@@ -87,7 +87,7 @@ function _ups_general_setup() {
             swapon ${SYSTEM_SWAP_FILE}
         fi
         if ! grep "${SYSTEM_SWAP_FILE}" /etc/fstab 2>&1 > /dev/null; then
-            _ups_log_info "appending swap file to fstab..."
+            _psh_log_info "appending swap file to fstab..."
             echo "${SYSTEM_SWAP_FILE} swap                                                        swap    defaults        0 0" >> /etc/fstab
         fi
     fi
@@ -101,7 +101,7 @@ function _ups_general_setup() {
         local SOURCE=${PROVISIONER_ASSETS}/${SYSTEM_HELPER_SCRIPT}
         local TARGET=${SYSTEM_BIN_DIR}/${SYSTEM_HELPER_SCRIPT}
         if ! type ${SYSTEM_HELPER_SCRIPT} >/dev/null 2>&1; then
-            _ups_log_info "installing ${SYSTEM_HELPER_SCRIPT} from: ${SOURCE} to: ${TARGET}"
+            _psh_log_info "installing ${SYSTEM_HELPER_SCRIPT} from: ${SOURCE} to: ${TARGET}"
             cp -vf ${SOURCE} ${TARGET}
             chmod +x ${TARGET}
         fi
@@ -111,9 +111,9 @@ function _ups_general_setup() {
 
 
 # -----------------------------------------------------------
-# _ups_general_verify
+# _psh_general_verify
 # -----------------------------------------------------------
 
-function _ups_general_verify() {
+function _psh_general_verify() {
     :
 }

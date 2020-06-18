@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_golang_pre_packages
+# _psh_golang_pre_packages
 # -----------------------------------------------------------
 
-function _ups_golang_configure() {
+function _psh_golang_configure() {
     SYSTEM_PACKAGES+=(
         go
     )
@@ -24,46 +24,46 @@ function _ups_golang_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_golang_post_packages
+# _psh_golang_post_packages
 # -----------------------------------------------------------
 
-function _ups_golang_validate() {
+function _psh_golang_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_golang_pre_install
+# _psh_golang_pre_install
 # -----------------------------------------------------------
 
-function _ups_golang_pre_install() {
+function _psh_golang_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_golang_setup
+# _psh_golang_setup
 # -----------------------------------------------------------
 
-function _ups_golang_setup() {
+function _psh_golang_setup() {
 
     # -----------------------------------------------------------
     # installing golang packages
     # -----------------------------------------------------------
 
     if ! grep "GOPATH" ~/.bash_profile; then
-        _ups_log_info "Adding GOPATH to ~/.bash_profile..."
+        _psh_log_info "Adding GOPATH to ~/.bash_profile..."
         cat >> ~/.bash_profile <<EOF
 PATH=$PATH:$(go env GOPATH)/bin
 export GOPATH=$(go env GOPATH)
 EOF
     fi
 
-    # _ups_log_debug "VARIABLE=${VARIABLE}"
-    _ups_log_info "Installing GO packages..."
+    # _psh_log_debug "VARIABLE=${VARIABLE}"
+    _psh_log_info "Installing GO packages..."
     local GO_PACKAGE_NAME=
     for GO_PACKAGE_NAME in ${GOLANG_PACKAGES[@]}; do
-        _ups_log_info "Installing GO package: ${GO_PACKAGE_NAME}"
+        _psh_log_info "Installing GO package: ${GO_PACKAGE_NAME}"
         go get ${GO_PACKAGE_NAME}
     done
 
@@ -71,10 +71,10 @@ EOF
 
 
 # -----------------------------------------------------------
-# _ups_golang_verify
+# _psh_golang_verify
 # -----------------------------------------------------------
 
-function _ups_golang_verify() {
+function _psh_golang_verify() {
     type go
     go version
 }

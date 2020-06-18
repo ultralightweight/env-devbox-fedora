@@ -9,52 +9,52 @@
 
 
 # -----------------------------------------------------------
-# _ups_MYMODULE_configure
+# _psh_MYMODULE_configure
 # -----------------------------------------------------------
 
-function _ups_MYMODULE_configure() {
+function _psh_MYMODULE_configure() {
     SYSTEM_PACKAGES+=(
     )
 }
 
 
 # -----------------------------------------------------------
-# _ups_MYMODULE_validate
+# _psh_MYMODULE_validate
 # -----------------------------------------------------------
 
-function _ups_MYMODULE_validate() {
+function _psh_MYMODULE_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_MYMODULE_pre_install
+# _psh_MYMODULE_pre_install
 # -----------------------------------------------------------
 
-function _ups_MYMODULE_pre_install() {
+function _psh_MYMODULE_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_MYMODULE_setup
+# _psh_MYMODULE_setup
 # -----------------------------------------------------------
 
-function _ups_MYMODULE_setup() {
+function _psh_MYMODULE_setup() {
 
     # -----------------------------------------------------------
     # step
     # -----------------------------------------------------------
 
-    _ups_log_info "step taken"
+    _psh_log_info "step taken"
 
 }
 
 
 # -----------------------------------------------------------
-# _ups_MYMODULE_verify
+# _psh_MYMODULE_verify
 # -----------------------------------------------------------
 
-function _ups_MYMODULE_verify() {
+function _psh_MYMODULE_verify() {
     :
 }

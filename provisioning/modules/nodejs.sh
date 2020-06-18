@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_nodejs_configure
+# _psh_nodejs_configure
 # -----------------------------------------------------------
 
-function _ups_nodejs_configure() {
+function _psh_nodejs_configure() {
     SYSTEM_PACKAGES+=(
         nodejs
         npm
@@ -21,34 +21,34 @@ function _ups_nodejs_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_nodejs_validate
+# _psh_nodejs_validate
 # -----------------------------------------------------------
 
-function _ups_nodejs_validate() {
+function _psh_nodejs_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_nodejs_pre_install
+# _psh_nodejs_pre_install
 # -----------------------------------------------------------
 
-function _ups_nodejs_pre_install() {
+function _psh_nodejs_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_nodejs_setup
+# _psh_nodejs_setup
 # -----------------------------------------------------------
 
-function _ups_nodejs_setup() {
+function _psh_nodejs_setup() {
 
     # -----------------------------------------------------------
     # quick fix npm link
     # -----------------------------------------------------------
 
-    # _ups_log_info "applying dirty npm link fix..."
+    # _psh_log_info "applying dirty npm link fix..."
 
     # Granting write access to global node_modules directory to everybody,
     # which is required for the `npm link` command to work from userland.
@@ -66,10 +66,10 @@ function _ups_nodejs_setup() {
 
 
 # -----------------------------------------------------------
-# _ups_nodejs_verify
+# _psh_nodejs_verify
 # -----------------------------------------------------------
 
-function _ups_nodejs_verify() {
+function _psh_nodejs_verify() {
     type node
     node --version
     type npm

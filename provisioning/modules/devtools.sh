@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_devtools_configure
+# _psh_devtools_configure
 # -----------------------------------------------------------
 
-function _ups_devtools_configure() {
+function _psh_devtools_configure() {
     SYSTEM_PACKAGES+=(
         git
         tig
@@ -28,43 +28,43 @@ function _ups_devtools_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_devtools_validate
+# _psh_devtools_validate
 # -----------------------------------------------------------
 
-function _ups_devtools_validate() {
+function _psh_devtools_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_devtools_pre_install
+# _psh_devtools_pre_install
 # -----------------------------------------------------------
 
-function _ups_devtools_pre_install() {
+function _psh_devtools_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_devtools_setup
+# _psh_devtools_setup
 # -----------------------------------------------------------
 
-function _ups_devtools_setup() {
+function _psh_devtools_setup() {
 
     # -----------------------------------------------------------
     # step
     # -----------------------------------------------------------
 
-    # _ups_log_info "step taken"
+    # _psh_log_info "step taken"
     :
 
 }
 
 
 # -----------------------------------------------------------
-# _ups_devtools_verify
+# _psh_devtools_verify
 # -----------------------------------------------------------
 
-function _ups_devtools_verify() {
+function _psh_devtools_verify() {
     :
 }

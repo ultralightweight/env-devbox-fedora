@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_mongodb_configure
+# _psh_mongodb_configure
 # -----------------------------------------------------------
 
-function _ups_mongodb_configure() {
+function _psh_mongodb_configure() {
 
     # -----------------------------------------------------------
     # packages
@@ -25,19 +25,19 @@ function _ups_mongodb_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_mongodb_validate
+# _psh_mongodb_validate
 # -----------------------------------------------------------
 
-function _ups_mongodb_validate() {
+function _psh_mongodb_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_mongodb_pre_install
+# _psh_mongodb_pre_install
 # -----------------------------------------------------------
 
-function _ups_mongodb_pre_install() {
+function _psh_mongodb_pre_install() {
 
     # -----------------------------------------------------------
     # write repofile
@@ -46,7 +46,7 @@ function _ups_mongodb_pre_install() {
     local repo_file="/etc/yum.repos.d/mongodb-org-4.0.repo"
 
     if [[ ! -f ${repo_file} ]]; then 
-        _ups_log_info "adding mongodb repositories..."
+        _psh_log_info "adding mongodb repositories..."
         cat > $repo_file <<EOF
 [Mongodb]
 name=MongoDB Repository
@@ -56,7 +56,7 @@ enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
 EOF
     else
-        _ups_log_notice "skip: mongodb repositories are already installed."
+        _psh_log_notice "skip: mongodb repositories are already installed."
     fi
 
 
@@ -65,16 +65,16 @@ EOF
 
 
 # -----------------------------------------------------------
-# _ups_mongodb_setup
+# _psh_mongodb_setup
 # -----------------------------------------------------------
 
-function _ups_mongodb_setup() {
+function _psh_mongodb_setup() {
 
     # -----------------------------------------------------------
     # enable service
     # -----------------------------------------------------------
 
-    _ups_log_info "enabling and starting mongdb service"
+    _psh_log_info "enabling and starting mongdb service"
 
     systemctl enable mongod
     systemctl start mongod
@@ -83,10 +83,10 @@ function _ups_mongodb_setup() {
 
 
 # -----------------------------------------------------------
-# _ups_mongodb_verify
+# _psh_mongodb_verify
 # -----------------------------------------------------------
 
-function _ups_mongodb_verify() {
+function _psh_mongodb_verify() {
     :
 }
 

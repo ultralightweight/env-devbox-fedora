@@ -9,62 +9,62 @@
 
 
 # -----------------------------------------------------------
-# _ups_repo_rpmfusion_configure
+# _psh_repo_rpmfusion_configure
 # -----------------------------------------------------------
 
-function _ups_repo_rpmfusion_configure() {
+function _psh_repo_rpmfusion_configure() {
     SYSTEM_PACKAGES+=(
     )
 }
 
 
 # -----------------------------------------------------------
-# _ups_repo_rpmfusion_validate
+# _psh_repo_rpmfusion_validate
 # -----------------------------------------------------------
 
-function _ups_repo_rpmfusion_validate() {
+function _psh_repo_rpmfusion_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_repo_rpmfusion_pre_install
+# _psh_repo_rpmfusion_pre_install
 # -----------------------------------------------------------
 
-function _ups_repo_rpmfusion_pre_install() {
+function _psh_repo_rpmfusion_pre_install() {
 
     if ! ls /etc/yum.repos.d/rpmfusion* &> /dev/null; then
-        _ups_log_info "adding rpmfusion repositories..."
+        _psh_log_info "adding rpmfusion repositories..."
         dnf install -y \
             https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
             https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
     else
-        _ups_log_notice "skip: rpmfusion repositories are already installed."
+        _psh_log_notice "skip: rpmfusion repositories are already installed."
     fi
 
 }
 
 
 # -----------------------------------------------------------
-# _ups_repo_rpmfusion_setup
+# _psh_repo_rpmfusion_setup
 # -----------------------------------------------------------
 
-function _ups_repo_rpmfusion_setup() {
+function _psh_repo_rpmfusion_setup() {
 
     # -----------------------------------------------------------
     # step
     # -----------------------------------------------------------
 
-    # _ups_log_info "step taken"
+    # _psh_log_info "step taken"
     :
 
 }
 
 
 # -----------------------------------------------------------
-# _ups_repo_rpmfusion_verify
+# _psh_repo_rpmfusion_verify
 # -----------------------------------------------------------
 
-function _ups_repo_rpmfusion_verify() {
+function _psh_repo_rpmfusion_verify() {
     :
 }

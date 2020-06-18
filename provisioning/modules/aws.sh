@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_aws_configure
+# _psh_aws_configure
 # -----------------------------------------------------------
 
-function _ups_aws_configure() {
+function _psh_aws_configure() {
     SYSTEM_PACKAGES+=(
     )
     PYTHON_PACKAGES+=(
@@ -38,28 +38,28 @@ function _ups_aws_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_aws_validate
+# _psh_aws_validate
 # -----------------------------------------------------------
 
-function _ups_aws_validate() {
+function _psh_aws_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_aws_pre_install
+# _psh_aws_pre_install
 # -----------------------------------------------------------
 
-function _ups_aws_pre_install() {
+function _psh_aws_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_aws_setup
+# _psh_aws_setup
 # -----------------------------------------------------------
 
-function _ups_aws_setup() {
+function _psh_aws_setup() {
 
 
     # -----------------------------------------------------------
@@ -67,7 +67,7 @@ function _ups_aws_setup() {
     # -----------------------------------------------------------
 
     if ! type eksctl >/dev/null 2>&1; then
-        _ups_log_info "installing eksctrl from: ${AWS_EKSCTL_DOWNLOAD_URL}"
+        _psh_log_info "installing eksctrl from: ${AWS_EKSCTL_DOWNLOAD_URL}"
         curl -sS --location ${AWS_EKSCTL_DOWNLOAD_URL} | tar xz -C /tmp
         mv -v /tmp/eksctl ${AWS_BIN_DIR}
     fi
@@ -78,7 +78,7 @@ function _ups_aws_setup() {
     # -----------------------------------------------------------
 
     if ! type aws-iam-authenticator >/dev/null 2>&1; then
-        _ups_log_info "installing aws-iam-authenticator from: ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}"
+        _psh_log_info "installing aws-iam-authenticator from: ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}"
         curl -sS -o aws-iam-authenticator ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}
         chmod +x aws-iam-authenticator
         mv -v aws-iam-authenticator ${AWS_BIN_DIR}
@@ -90,7 +90,7 @@ function _ups_aws_setup() {
     # -----------------------------------------------------------
 
     if ! type aws-cloudformation-stack-status >/dev/null 2>&1; then
-        _ups_log_info "installing aws-cloudformation-stack-status from: ${AWS_CF_WATCH_DOWNLOAD_URL}"
+        _psh_log_info "installing aws-cloudformation-stack-status from: ${AWS_CF_WATCH_DOWNLOAD_URL}"
         curl -sS -o aws-cloudformation-stack-status ${AWS_CF_WATCH_DOWNLOAD_URL}
         chmod +x aws-cloudformation-stack-status
         mv -v aws-cloudformation-stack-status ${AWS_BIN_DIR}
@@ -106,7 +106,7 @@ function _ups_aws_setup() {
         local SOURCE=${PROVISIONER_ASSETS}/${AWS_HELPER_SCRIPT}
         local TARGET=${AWS_BIN_DIR}/${AWS_HELPER_SCRIPT}
         if ! type ${AWS_HELPER_SCRIPT} >/dev/null 2>&1; then
-            _ups_log_info "installing ${AWS_HELPER_SCRIPT} from: ${SOURCE} to: ${TARGET}"
+            _psh_log_info "installing ${AWS_HELPER_SCRIPT} from: ${SOURCE} to: ${TARGET}"
             cp -vf ${SOURCE} ${TARGET}
             chmod +x ${TARGET}
         fi
@@ -117,19 +117,19 @@ function _ups_aws_setup() {
     # config
     # -----------------------------------------------------------
 
-    _ups_log_info "setting up aws configuration and credentials..."
+    _psh_log_info "setting up aws configuration and credentials..."
 
     mkdir -p ${AWS_CONFIG_DIR}
 
     if [[ ! -f ${AWS_CONFIG_FILE} ]]; then
-        _ups_log_info "writing aws config file: ${AWS_CONFIG_FILE}"
+        _psh_log_info "writing aws config file: ${AWS_CONFIG_FILE}"
         cat > ${AWS_CONFIG_FILE} <<EOF
 [default]
 region = ${AWS_CONFIG_REGION}
 output = ${AWS_CONFIG_DEFAULT_FORMAT}
 EOF
     else
-        _ups_log_notice "skip: aws config file already exists: ${AWS_CONFIG_FILE}"
+        _psh_log_notice "skip: aws config file already exists: ${AWS_CONFIG_FILE}"
     fi
 
 
@@ -138,11 +138,11 @@ EOF
     # -----------------------------------------------------------
 
     if [[ -d ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws ]]; then
-        _ups_log_info "copying aws credential files..."
+        _psh_log_info "copying aws credential files..."
         cp -rv ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/. ${AWS_CONFIG_DIR}/
         rm -fv ${AWS_CONFIG_DIR}/.placeholder
     else
-        _ups_log_warning "no aws credentials found in: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/"
+        _psh_log_warning "no aws credentials found in: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/"
     fi
 
     chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${DEVUSER_HOME}/.aws
@@ -156,10 +156,10 @@ EOF
     # mkdir -p ${DEVUSER_HOME}/.ssh
 
     # if [[ -d /vagrant/keys ]]; then
-    #     _ups_log_info "copying ssh keys..."
+    #     _psh_log_info "copying ssh keys..."
     #     cp -v /vagrant/keys/* ${DEVUSER_HOME}/.ssh/
     # else
-    #     _ups_log_warning "ssh keys are not found in the /vagrant/keys directory." >&2
+    #     _psh_log_warning "ssh keys are not found in the /vagrant/keys directory." >&2
     # fi
 
     # chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${AWS_CONFIG_DIR}
@@ -168,10 +168,10 @@ EOF
 
 
 # -----------------------------------------------------------
-# _ups_aws_verify
+# _psh_aws_verify
 # -----------------------------------------------------------
 
-function _ups_aws_verify() {
+function _psh_aws_verify() {
     type aws
     aws --version
 

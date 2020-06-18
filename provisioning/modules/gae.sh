@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_gae_configure
+# _psh_gae_configure
 # -----------------------------------------------------------
 
-function _ups_gae_configure() {
+function _psh_gae_configure() {
 
     # -----------------------------------------------------------
     # packages
@@ -37,19 +37,19 @@ function _ups_gae_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_gae_validate
+# _psh_gae_validate
 # -----------------------------------------------------------
 
-function _ups_gae_validate() {
+function _psh_gae_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_gae_pre_install
+# _psh_gae_pre_install
 # -----------------------------------------------------------
 
-function _ups_gae_pre_install() {
+function _psh_gae_pre_install() {
 
     # -----------------------------------------------------------
     # write repofile
@@ -58,7 +58,7 @@ function _ups_gae_pre_install() {
     local repo_file="/etc/yum.repos.d/google-cloud-sdk.repo"
     
     if [[ ! -f ${repo_file} ]]; then 
-        _ups_log_info "adding gae repositories..."
+        _psh_log_info "adding gae repositories..."
         cat > $repo_file <<EOF
 [google-cloud-sdk]
 name=Google Cloud SDK
@@ -70,7 +70,7 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
        https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
     else
-        _ups_log_notice "skip: gae repositories are already installed."
+        _psh_log_notice "skip: gae repositories are already installed."
     fi
 
 
@@ -78,10 +78,10 @@ EOF
 
 
 # -----------------------------------------------------------
-# _ups_gae_setup
+# _psh_gae_setup
 # -----------------------------------------------------------
 
-function _ups_gae_setup() {
+function _psh_gae_setup() {
     # -----------------------------------------------------------
     # appcfg.py
     # -----------------------------------------------------------
@@ -93,10 +93,10 @@ function _ups_gae_setup() {
 
 
 # -----------------------------------------------------------
-# _ups_gae_verify
+# _psh_gae_verify
 # -----------------------------------------------------------
 
-function _ups_gae_verify() {
+function _psh_gae_verify() {
     :
 }
 

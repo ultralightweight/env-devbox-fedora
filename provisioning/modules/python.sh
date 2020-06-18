@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_python_pre_packages
+# _psh_python_pre_packages
 # -----------------------------------------------------------
 
-function _ups_python_configure() {
+function _psh_python_configure() {
     PYTHON_PACKAGES+=(
         virtualenv
     )
@@ -35,25 +35,25 @@ function _ups_python_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_python_post_packages
+# _psh_python_post_packages
 # -----------------------------------------------------------
 
-function _ups_python_validate() {
+function _psh_python_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_python_pre_install
+# _psh_python_pre_install
 # -----------------------------------------------------------
 
-function _ups_python_pre_install() {
+function _psh_python_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_python_setup
+# _psh_python_setup
 # -----------------------------------------------------------
 
 function _setup_python() {
@@ -62,18 +62,18 @@ function _setup_python() {
     eval "local PYTHON_VERSION=\${PYTHON${PYTHON_MAJOR_VERSION}_VERSION}"
     local PIP=$(type -p pip${PYTHON_VERSION})
 
-    _ups_log_info "Setting up Python version ${PYTHON_VERSION}"
+    _psh_log_info "Setting up Python version ${PYTHON_VERSION}"
 
-    _ups_log_debug "PYTHON_MAJOR_VERSION=${PYTHON_MAJOR_VERSION}"
-    _ups_log_debug "PYTHON_VERSION=${PYTHON_MAJOR_VERSION}"
-    _ups_log_debug "PIP=${PYTHON_MAJOR_VERSION}"
-    _ups_log_debug "PIP_PACKAGES=${PYTHON_MAJOR_VERSION}"
+    _psh_log_debug "PYTHON_MAJOR_VERSION=${PYTHON_MAJOR_VERSION}"
+    _psh_log_debug "PYTHON_VERSION=${PYTHON_MAJOR_VERSION}"
+    _psh_log_debug "PIP=${PYTHON_MAJOR_VERSION}"
+    _psh_log_debug "PIP_PACKAGES=${PYTHON_MAJOR_VERSION}"
 
     # -----------------------------------------------------------
     # upgrade pip
     # -----------------------------------------------------------
 
-    _ups_log_info "python-${PYTHON_VERSION}: upgrading pip..."
+    _psh_log_info "python-${PYTHON_VERSION}: upgrading pip..."
     ${PIP} install --upgrade pip
 
     local PIP=$(type -p pip${PYTHON_VERSION})
@@ -82,16 +82,16 @@ function _setup_python() {
     # installing python packages
     # -----------------------------------------------------------
 
-    _ups_log_info "python-${PYTHON_VERSION}: installing python packages..."
+    _psh_log_info "python-${PYTHON_VERSION}: installing python packages..."
     ${PIP} install ${PIP_PACKAGES[@]}
 
 }
 
 # -----------------------------------------------------------
-# _ups_python_setup
+# _psh_python_setup
 # -----------------------------------------------------------
 
-function _ups_python_setup() {
+function _psh_python_setup() {
 
     # -----------------------------------------------------------
     # installing python packages
@@ -104,10 +104,10 @@ function _ups_python_setup() {
 
 
 # -----------------------------------------------------------
-# _ups_python_verify
+# _psh_python_verify
 # -----------------------------------------------------------
 
-function _ups_python_verify() {
+function _psh_python_verify() {
     type python2
     python2 --version
     type python3

@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_samba_configure
+# _psh_samba_configure
 # -----------------------------------------------------------
 
-function _ups_samba_configure() {
+function _psh_samba_configure() {
     SYSTEM_PACKAGES+=(
         samba
     )
@@ -20,39 +20,39 @@ function _ups_samba_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_samba_validate
+# _psh_samba_validate
 # -----------------------------------------------------------
 
-function _ups_samba_validate() {
+function _psh_samba_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_samba_pre_install
+# _psh_samba_pre_install
 # -----------------------------------------------------------
 
-function _ups_samba_pre_install() {
+function _psh_samba_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_samba_setup
+# _psh_samba_setup
 # -----------------------------------------------------------
 
-function _ups_samba_setup() {
+function _psh_samba_setup() {
 
     # -----------------------------------------------------------
     # samba shares
     # -----------------------------------------------------------
 
-    _ups_log_info "configuring samba shares..."
+    _psh_log_info "configuring samba shares..."
 
     cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
 
     if [[ ! $(grep "\[system\]" /etc/samba/smb.conf) ]]; then 
-        _ups_log_info "creating samba share 'system'..."
+        _psh_log_info "creating samba share 'system'..."
         cat << EOF > /etc/samba/smb.conf
 [system]
         comment = Root directory
@@ -72,7 +72,7 @@ fi
     # samba service
     # -----------------------------------------------------------
 
-    _ups_log_info "enabling and starting samba server service..."
+    _psh_log_info "enabling and starting samba server service..."
     setsebool -P samba_enable_home_dirs=1
     systemctl start smb nmb
     systemctl enable smb nmb
@@ -81,10 +81,10 @@ fi
 
 
 # -----------------------------------------------------------
-# _ups_samba_verify
+# _psh_samba_verify
 # -----------------------------------------------------------
 
-function _ups_samba_verify() {
+function _psh_samba_verify() {
     :
 
     systemctl status smb nmb

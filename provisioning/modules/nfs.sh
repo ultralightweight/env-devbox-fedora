@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_nfs_configure
+# _psh_nfs_configure
 # -----------------------------------------------------------
 
-function _ups_nfs_configure() {
+function _psh_nfs_configure() {
     SYSTEM_PACKAGES+=(
         nfs-utils
     )
@@ -20,34 +20,34 @@ function _ups_nfs_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_nfs_validate
+# _psh_nfs_validate
 # -----------------------------------------------------------
 
-function _ups_nfs_validate() {
+function _psh_nfs_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_nfs_pre_install
+# _psh_nfs_pre_install
 # -----------------------------------------------------------
 
-function _ups_nfs_pre_install() {
+function _psh_nfs_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_nfs_setup
+# _psh_nfs_setup
 # -----------------------------------------------------------
 
-function _ups_nfs_setup() {
+function _psh_nfs_setup() {
 
     # -----------------------------------------------------------
     # nfs shares
     # -----------------------------------------------------------
 
-    _ups_log_info "configuring NFS shares..."
+    _psh_log_info "configuring NFS shares..."
 
     sed -i -r "s/#Domain = [a-z.]*/Domain = devbox/g" /etc/idmapd.conf
 
@@ -59,7 +59,7 @@ EOF
     # nfs service
     # -----------------------------------------------------------
 
-    _ups_log_info "enabling and starting NFS server service..."
+    _psh_log_info "enabling and starting NFS server service..."
     systemctl start rpcbind nfs-server
     systemctl enable rpcbind nfs-server
 
@@ -67,10 +67,10 @@ EOF
 
 
 # -----------------------------------------------------------
-# _ups_nfs_verify
+# _psh_nfs_verify
 # -----------------------------------------------------------
 
-function _ups_nfs_verify() {
+function _psh_nfs_verify() {
     :
 }
 

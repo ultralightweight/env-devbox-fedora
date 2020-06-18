@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_terraform_pre_packages
+# _psh_terraform_pre_packages
 # -----------------------------------------------------------
 
-function _ups_terraform_configure() {
+function _psh_terraform_configure() {
     SYSTEM_PACKAGES+=(
         unzip
     )
@@ -22,54 +22,54 @@ function _ups_terraform_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_terraform_post_packages
+# _psh_terraform_post_packages
 # -----------------------------------------------------------
 
-function _ups_terraform_validate() {
+function _psh_terraform_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_terraform_pre_install
+# _psh_terraform_pre_install
 # -----------------------------------------------------------
 
-function _ups_terraform_pre_install() {
+function _psh_terraform_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_terraform_setup
+# _psh_terraform_setup
 # -----------------------------------------------------------
 
-function _ups_terraform_setup() {
+function _psh_terraform_setup() {
 
     # -----------------------------------------------------------
     # installing terraform
     # -----------------------------------------------------------
 
-    _ups_log_info "Installing Terraform..."
+    _psh_log_info "Installing Terraform..."
     if ! type terraform; then
         local TERRAFORM_INSTALLER_DIR=/tmp/terraform-installer
         local TERRAFORM_INSTALLER=${TERRAFORM_INSTALLER_DIR}/terraform.zip
-        _ups_log_info "Downloading terraform installer from: ${TERRAFORM_DOWNLOAD_PATH} to ${TERRAFORM_INSTALLER}"
+        _psh_log_info "Downloading terraform installer from: ${TERRAFORM_DOWNLOAD_PATH} to ${TERRAFORM_INSTALLER}"
         mkdir -pv ${TERRAFORM_INSTALLER_DIR}
         curl ${TERRAFORM_DOWNLOAD_PATH} > ${TERRAFORM_INSTALLER}
         unzip -o ${TERRAFORM_INSTALLER} -d ${TERRAFORM_INSTALLER_DIR}
         mv -v ${TERRAFORM_INSTALLER_DIR}/terraform /usr/bin
     else
-        _ups_log_notice "Terraform is already installed: $(type terraform)"
+        _psh_log_notice "Terraform is already installed: $(type terraform)"
     fi
 
 }
 
 
 # -----------------------------------------------------------
-# _ups_terraform_verify
+# _psh_terraform_verify
 # -----------------------------------------------------------
 
-function _ups_terraform_verify() {
+function _psh_terraform_verify() {
     type terraform
     terraform -v
 }

@@ -9,51 +9,51 @@
 
 
 # -----------------------------------------------------------
-# _ups_devproject_configure
+# _psh_devproject_configure
 # -----------------------------------------------------------
 
-function _ups_devproject_configure() {
+function _psh_devproject_configure() {
     SYSTEM_PACKAGES+=(
     )
 }
 
 
 # -----------------------------------------------------------
-# _ups_devproject_validate
+# _psh_devproject_validate
 # -----------------------------------------------------------
 
-function _ups_devproject_validate() {
+function _psh_devproject_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_devproject_pre_install
+# _psh_devproject_pre_install
 # -----------------------------------------------------------
 
-function _ups_devproject_pre_install() {
+function _psh_devproject_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_devproject_setup
+# _psh_devproject_setup
 # -----------------------------------------------------------
 
-function _ups_devproject_setup() {
+function _psh_devproject_setup() {
 
     # -----------------------------------------------------------
     # step
     # -----------------------------------------------------------
 
-    _ups_log_info "step taken"
+    _psh_log_info "step taken"
 
 
     # -----------------------------------------------------------
     # invoking unprivilaged provisioner
     # -----------------------------------------------------------
 
-    _ups_log_info "executing project setup with devuser: ${DEVUSER_NAME}"
+    _psh_log_info "executing project setup with devuser: ${DEVUSER_NAME}"
 
     local module_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
     su - ${DEVUSER_NAME} ${module_root}/devproject-unprivileged.sh
@@ -62,9 +62,9 @@ function _ups_devproject_setup() {
 
 
 # -----------------------------------------------------------
-# _ups_devproject_verify
+# _psh_devproject_verify
 # -----------------------------------------------------------
 
-function _ups_devproject_verify() {
+function _psh_devproject_verify() {
     :
 }

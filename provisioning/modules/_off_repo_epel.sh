@@ -9,10 +9,10 @@
 
 
 # -----------------------------------------------------------
-# _ups_repo_epel_configure
+# _psh_repo_epel_configure
 # -----------------------------------------------------------
 
-function _ups_repo_epel_configure() {
+function _psh_repo_epel_configure() {
     SYSTEM_PACKAGES+=(
         epel-release
     )
@@ -20,43 +20,43 @@ function _ups_repo_epel_configure() {
 
 
 # -----------------------------------------------------------
-# _ups_repo_epel_validate
+# _psh_repo_epel_validate
 # -----------------------------------------------------------
 
-function _ups_repo_epel_validate() {
+function _psh_repo_epel_validate() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_repo_epel_pre_install
+# _psh_repo_epel_pre_install
 # -----------------------------------------------------------
 
-function _ups_repo_epel_pre_install() {
+function _psh_repo_epel_pre_install() {
     :
 }
 
 
 # -----------------------------------------------------------
-# _ups_repo_epel_setup
+# _psh_repo_epel_setup
 # -----------------------------------------------------------
 
-function _ups_repo_epel_setup() {
+function _psh_repo_epel_setup() {
 
     # -----------------------------------------------------------
     # step
     # -----------------------------------------------------------
 
-    # _ups_log_info "step taken"
+    # _psh_log_info "step taken"
     :
 
 }
 
 
 # -----------------------------------------------------------
-# _ups_repo_epel_verify
+# _psh_repo_epel_verify
 # -----------------------------------------------------------
 
-function _ups_repo_epel_verify() {
+function _psh_repo_epel_verify() {
     :
 }

@@ -24,12 +24,6 @@ export PROVISIONER_ENABLED_MODULES=(
     # repo_rpmfusion
 
     # ---------------------------
-    # file sharing modules
-    # ---------------------------
-    nfs
-    # samba
-
-    # ---------------------------
     # developer user and tools
     # ---------------------------
     devuser
@@ -37,16 +31,22 @@ export PROVISIONER_ENABLED_MODULES=(
     # devproject
 
     # ---------------------------
+    # file sharing modules
+    # ---------------------------
+    nfs
+    # samba
+
+    # ---------------------------
     # programming languages
     # ---------------------------
     python
     # golang
-    # nodejs
+    nodejs
 
     # ---------------------------
     # databases
     # ---------------------------
-    # mongodb
+    # mongodb    # broken
     # mongotron
 
     # ---------------------------
@@ -83,8 +83,8 @@ export PROVISIONER_ENABLED_MODULES=(
 # Set the timezone for the VM
 #
 
-# export SYSTEM_TIMEZONE=Australia/Sydney
 export SYSTEM_TIMEZONE=UTC
+# export SYSTEM_TIMEZONE=Australia/Sydney
 
 
 # -----------------------------------------------------------
@@ -134,9 +134,11 @@ export PYTHON_PACKAGES=(
 # nodejs config
 # -----------------------------------------------------------
 
-export NODEJS_NVM_VERSION=0.33.11
+export NODEJS_NVM_VERSION=0.35.3
 export NODEJS_VERSION=--lts
-
+export NODEJS_PACKAGES=(
+#     @vue/cli
+)
 
 # -----------------------------------------------------------
 # VPN config

@@ -21,7 +21,7 @@ export PROVISIONER_ENABLED_MODULES=(
     # ---------------------------
     general
     # repo_epel
-    repo_rpmfusion
+    # repo_rpmfusion
 
     # ---------------------------
     # file sharing modules
@@ -41,7 +41,7 @@ export PROVISIONER_ENABLED_MODULES=(
     # ---------------------------
     python
     # golang
-    # nodejs
+    nodejs
 
     # ---------------------------
     # databases

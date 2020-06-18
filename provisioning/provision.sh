@@ -26,6 +26,13 @@ PROVISIONER_VERSION=1.17
 # set -x -v
 DEBUG=
 
+# -----------------------------------------------------------
+# Library mode
+# -----------------------------------------------------------
+
+PROVISIONER_LIBRARY=${PROVISIONER_LIBRARY:-}
+PROVISIONER_LOG_BASE=${PROVISIONER_LOG_BASE:-}
+
 # ------------------------------------------------
 # enable strict mode()
 # ------------------------------------------------
@@ -88,11 +95,10 @@ NEWLINE=$'\n'
 # -----------------------------------------------------------
 
 function _psh_log_to_fd() {
-    local i=1
     if [ -z $DEBUG ]; then
-        local source="$(basename ${BASH_SOURCE[i+1]}):${FUNCNAME[i+1]}"
+        local source="${PROVISIONER_LOG_BASE}$(basename ${BASH_SOURCE[2]}):${FUNCNAME[2]}"
     else
-        local source="${BASH_SOURCE[i+1]}:${FUNCNAME[i+1]}:${BASH_LINENO[i]}"    
+        local source="${PROVISIONER_LOG_BASE}${BASH_SOURCE[2]}:${FUNCNAME[2]}:${BASH_LINENO[1]}"
     fi
     local level=$1
     local message=$2
@@ -155,10 +161,11 @@ function _psh_log_error() {
 # global variables
 # -----------------------------------------------------------
 
-PROVISIONER_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+export PROVISIONER_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 if [ "${PROVISIONER_ROOT}" == "/tmp" ]; then
     PROVISIONER_ROOT=/vagrant/provisioning
 fi
+export PROVISIONER_MAIN=${PROVISIONER_ROOT}/provision.sh
 PROVISIONER_LOADED_MODULES=()
 PROVISIONER_ASSETS=${PROVISIONER_ROOT}/assets
 PROVISIONER_DEFAULT_CONFIG_FILE=${PROVISIONER_ROOT}/default_config.sh
@@ -221,7 +228,27 @@ function _psh_load_module() {
 
 
 # -----------------------------------------------------------
-# _psh_load_module()
+# _psh_execute_as()
+# -----------------------------------------------------------
+
+function _psh_execute_as() {
+    local user_name=$1
+    local script_file=$2
+    local module_root="$( cd "$( dirname "${BASH_SOURCE[1]}" )" >/dev/null && pwd )"
+    local source="_psh_execute_as:"
+    _psh_log_info "executing ${script_file} as ${user_name}..."
+    su ${user_name} -c "\
+        export PROVISIONER_LIBRARY=1; \
+        export PROVISIONER_LOG_BASE='${source}:'; \
+        export PROVISIONER_MODULE_ROOT='${module_root}'; \
+        cd ${HOME}; \
+        bash ${module_root}/${script_file}\
+    "
+}
+
+
+# -----------------------------------------------------------
+# _psh_execute_phase()
 # -----------------------------------------------------------
 
 function _psh_execute_phase() {
@@ -241,28 +268,31 @@ function _psh_execute_phase() {
 
 }
 
+
 # -----------------------------------------------------------
 # load config
 # -----------------------------------------------------------
 
-_psh_log_info "============================================================================"
-_psh_log_info "Provisioner.sh version ${PROVISIONER_VERSION} initializing..."
-_psh_log_info "============================================================================"
+if [[ -z ${PROVISIONER_LIBRARY} ]]; then 
+    _psh_log_info "============================================================================"
+    _psh_log_info "Provisioner.sh version ${PROVISIONER_VERSION} initializing..."
+    _psh_log_info "============================================================================"
 
-_psh_log_info "Loading default configuration: ${PROVISIONER_DEFAULT_CONFIG_FILE}"
-. ${PROVISIONER_DEFAULT_CONFIG_FILE}
+    _psh_log_info "Loading default configuration: ${PROVISIONER_DEFAULT_CONFIG_FILE}"
+    . ${PROVISIONER_DEFAULT_CONFIG_FILE}
 
-_psh_log_debug "PROVISIONER_CONFIG_ROOT: ${PROVISIONER_CONFIG_ROOT}"
-_psh_log_debug "PROVISIONER_CONFIG_FILE: ${PROVISIONER_CONFIG_FILE}"
-_psh_log_debug "PROVISIONER_CONFIG_ASSETS_ROOT: ${PROVISIONER_CONFIG_ASSETS_ROOT}"
-_psh_log_debug "PROVISIONER_CONFIG_CREDENTIALS_ROOT: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}"
+    _psh_log_debug "PROVISIONER_CONFIG_ROOT: ${PROVISIONER_CONFIG_ROOT}"
+    _psh_log_debug "PROVISIONER_CONFIG_FILE: ${PROVISIONER_CONFIG_FILE}"
+    _psh_log_debug "PROVISIONER_CONFIG_ASSETS_ROOT: ${PROVISIONER_CONFIG_ASSETS_ROOT}"
+    _psh_log_debug "PROVISIONER_CONFIG_CREDENTIALS_ROOT: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}"
 
-_psh_log_info "Loading configuration file: ${PROVISIONER_CONFIG_FILE}"
-. ${PROVISIONER_CONFIG_FILE}
+    _psh_log_info "Loading configuration file: ${PROVISIONER_CONFIG_FILE}"
+    . ${PROVISIONER_CONFIG_FILE}
+fi
 
 
 # -----------------------------------------------------------
-# main
+# _psh_main
 # -----------------------------------------------------------
 
 
@@ -296,7 +326,10 @@ _psh_main() {
 # -----------------------------------------------------------
 
 _strict-mode
-_psh_main "$@"
+
+if [[ -z ${PROVISIONER_LIBRARY} ]]; then
+    _psh_main "$@"
+fi
 
 
 

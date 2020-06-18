@@ -59,8 +59,7 @@ function _psh_nodejs_setup() {
     # unprivileged nvm install
     # -----------------------------------------------------------
 
-    local module_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-    su - ${DEVUSER_NAME} ${module_root}/nodejs-unprivileged.sh
+    _psh_execute_as ${DEVUSER_NAME} nodejs-unprivileged.sh
 
 }
 
@@ -75,4 +74,3 @@ function _psh_nodejs_verify() {
     type npm
     npm --version
 }
-

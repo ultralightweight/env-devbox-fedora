@@ -43,20 +43,10 @@ function _psh_devproject_pre_install() {
 function _psh_devproject_setup() {
 
     # -----------------------------------------------------------
-    # step
-    # -----------------------------------------------------------
-
-    _psh_log_info "step taken"
-
-
-    # -----------------------------------------------------------
     # invoking unprivilaged provisioner
     # -----------------------------------------------------------
 
-    _psh_log_info "executing project setup with devuser: ${DEVUSER_NAME}"
-
-    local module_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-    su - ${DEVUSER_NAME} ${module_root}/devproject-unprivileged.sh
+    _psh_execute_as ${DEVUSER_NAME} devproject-unprivileged.sh
 
 }
 

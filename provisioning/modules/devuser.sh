@@ -83,14 +83,12 @@ function _psh_devuser_setup() {
     chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${DEVUSER_HOME}/.ssh
     chmod 600 ${DEVUSER_HOME}/.ssh/*
 
+
     # -----------------------------------------------------------
     # invoking unprivilaged provisioner
     # -----------------------------------------------------------
     
-    _psh_log_info "executing personalization with devuser: ${DEVUSER_NAME}"
-
-    local module_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-    su - ${DEVUSER_NAME} ${module_root}/devuser-unprivileged.sh
+    _psh_execute_as ${DEVUSER_NAME} devuser-unprivileged.sh
 
 }
 

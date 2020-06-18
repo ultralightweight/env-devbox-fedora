@@ -7,21 +7,19 @@
 # file-purpose: project setup stage executed as developer user
 # -----------------------------------------------------------------------------
 
-set -e
-
 
 # -----------------------------------------------------------
-# load config
+# load provisioner
 # -----------------------------------------------------------
 
-. /vagrant/provisioning/config.sh
+source ${PROVISIONER_MAIN}
 
 
 # -----------------------------------------------------------
 # setup project
 # -----------------------------------------------------------
 
-echo "$0: setting up project"
+_psh_log_info "setting up project"
 
 if [ ! -d ${DEVPROJECT_DIR} ]; then
     git clone ${DEVPROJECT_GIT} ${DEVPROJECT_DIR}
@@ -29,12 +27,13 @@ fi
 
 DEVPROJECT_SETUP_FILE=~/devproject_setup.sh
 
-echo "$0: writing project setup script file: ${DEVPROJECT_SETUP_FILE}"
+_psh_log_info "writing project setup script file: ${DEVPROJECT_SETUP_FILE}"
 
 echo -n "${DEVPROJECT_SETUP}" > ${DEVPROJECT_SETUP_FILE}
 
-echo "$0: executing devproject setup file: ${DEVPROJECT_SETUP_FILE}"
+_psh_log_info "executing devproject setup file: ${DEVPROJECT_SETUP_FILE}"
 source ${DEVPROJECT_SETUP_FILE}
 
 
-echo "$0: project ready"
+_psh_log_info "project ready"
+

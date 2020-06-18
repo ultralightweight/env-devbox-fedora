@@ -3,17 +3,25 @@
 # package: ultralight provisioning system
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
-# file-version: 1.17
+# file-version: 2.0
 # file-purpose: provisioner configuration
 # -----------------------------------------------------------------------------
 
-set -e
+
+# ------------------------------------------------
+# enable strict mode
+# ------------------------------------------------
+# Read more about strict mode: http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+set -E -uo pipefail
+IFS=$'\n    '    
+
 
 # -----------------------------------------------------------
 # provisioner.sh version
 # -----------------------------------------------------------
 
-PROVISIONER_VERSION=1.17
+PROVISIONER_VERSION=2.0
 
 
 # -----------------------------------------------------------
@@ -24,23 +32,15 @@ PROVISIONER_VERSION=1.17
 #
 
 # set -x -v
-DEBUG=
+export PROVISIONER_DEBUG=${PROVISIONER_DEBUG:-}
+
 
 # -----------------------------------------------------------
-# Library mode
+# Library mode control variables
 # -----------------------------------------------------------
 
 PROVISIONER_LIBRARY=${PROVISIONER_LIBRARY:-}
 PROVISIONER_LOG_BASE=${PROVISIONER_LOG_BASE:-}
-
-# ------------------------------------------------
-# enable strict mode()
-# ------------------------------------------------
-
-function _strict-mode() {
-    set -euo pipefail
-    IFS=$'\n    '    
-}
 
 
 # ------------------------------------------------
@@ -52,42 +52,60 @@ function _psh_print_traceback() {
   local FRAMES=${#BASH_LINENO[@]}
   echo "-----------------------------------------------------" >&2
   echo "Traceback (most recent call last):" >&2
-  # FRAMES-2 skips the exception trap logs
-  for ((i=FRAMES-2; i>=0; i--)); do
-    echo "  File \"${BASH_SOURCE[i+1]}\", line ${BASH_LINENO[i]}, in ${FUNCNAME[i+1]}" >&2
-    # Grab the source code of the line"
-    if (( i > 0 )); then
-        sed "${BASH_LINENO[i]}q;d" "${BASH_SOURCE[i+1]}" | sed 's/^ */    /g' >&2
-    else
-        echo "    ${BASH_COMMAND}" >&2
-    fi
+  for ((i=FRAMES-2; i>=1; i--)); do
+    source=$(sed "${BASH_LINENO[i]}q;d" "${BASH_SOURCE[i+1]}" | sed 's/^ *//g')
+    lineno=${BASH_LINENO[i]}
+    echo "  File \"${BASH_SOURCE[i+1]}\", line ${lineno}, in ${FUNCNAME[i+1]}" >&2
+    echo "    ${source}" >&2
   done
 }
 
 
 # ------------------------------------------------
-# install exception trap
+# _psh_exception_trap
 # ------------------------------------------------
 
-if [[ ! -n "${EXCEPTION_TRAP_DISABLED+x}" || -z ${EXCEPTION_TRAP_DISABLED} ]]; then
-    trap 'EXIT_CODE=$?
-        COMMAND=${BASH_COMMAND}
-        #echo "provisioner.sh: exit trap: ${COMMAND} exit: ${EXIT_CODE}"
-        if (( $EXIT_CODE != 0 && $EXIT_CODE != 100 )); then 
-            _psh_print_traceback
-            echo -e "\nerror: command \`$COMMAND\` returned $EXIT_CODE" >&2
-            echo "   " >&2
-        fi
-        exit $EXIT_CODE
-        ' EXIT
-fi
+function _psh_exception_trap() {
+    local exit_code=$1
+    local line_no=$2
+    local signal_name=$3
+    if (( $exit_code != 0 && $exit_code != 177 )); then 
+        _psh_print_traceback
+        echo "   " >&2
+        echo "error in ${BASH_SOURCE[1]} line $line_no, command \`${BASH_COMMAND}\` returned $exit_code" >&2
+        echo "   " >&2
+        # We need to do this to be able to handle nested errors
+    fi
+    [[ "$exit_code" == "0" ]] && exit 0
+    if [[ "$signal_name" == "ERR" && "$exit_code" == "177" ]]; then
+        exit 178
+    else
+        exit 177
+    fi
+}
 
 
 # ------------------------------------------------
-# constants
+# activate exception trap
 # ------------------------------------------------
 
-NEWLINE=$'\n'
+trap '_psh_exception_trap $? ${LINENO} ERR' ERR
+trap '_psh_exception_trap $? ??? EXIT' EXIT   # we loose line number info in EXIT trap for some godforsaken reason. :-/
+
+
+# -----------------------------------------------------------
+# _psh_get_caller()
+# -----------------------------------------------------------
+
+function _psh_get_caller() {
+    local i=${1:-1}
+    if [ -z $PROVISIONER_DEBUG ]; then
+        local source="${PROVISIONER_LOG_BASE}$(basename ${BASH_SOURCE[i+1]}):${FUNCNAME[i+1]}"
+    else
+        local source="${PROVISIONER_LOG_BASE}${BASH_SOURCE[i+1]}:${FUNCNAME[i+1]}:${BASH_LINENO[i]}"
+    fi
+    echo $source
+}
 
 
 # -----------------------------------------------------------
@@ -95,11 +113,7 @@ NEWLINE=$'\n'
 # -----------------------------------------------------------
 
 function _psh_log_to_fd() {
-    if [ -z $DEBUG ]; then
-        local source="${PROVISIONER_LOG_BASE}$(basename ${BASH_SOURCE[2]}):${FUNCNAME[2]}"
-    else
-        local source="${PROVISIONER_LOG_BASE}${BASH_SOURCE[2]}:${FUNCNAME[2]}:${BASH_LINENO[1]}"
-    fi
+    local source=$(_psh_get_caller 2)
     local level=$1
     local message=$2
     local to_stderr=${3:-}
@@ -116,7 +130,7 @@ function _psh_log_to_fd() {
 # -----------------------------------------------------------
 
 function _psh_log_debug() {
-    if [ -z $DEBUG ]; then
+    if [ -z $PROVISIONER_DEBUG ]; then
         return
     fi
     _psh_log_to_fd "DEBUG" "$1"
@@ -177,16 +191,58 @@ export PROVISIONER_CONFIG_FILE=${PROVISIONER_CONFIG_ROOT}/config.sh
 
 
 # -----------------------------------------------------------
-# UPS internal global variables
+# Internal global variables
 # -----------------------------------------------------------
 
-_UPS_PHASES=(
+_PROVISIONER_PHASES=(
     configure
     validate
     pre_install
     setup
     verify    
 )
+
+
+# -----------------------------------------------------------
+# _psh_execute_as()
+# -----------------------------------------------------------
+
+function _psh_execute_as() {
+    local env_variables=()
+    while getopts "e:" OPT; do
+      case $OPT in
+        e)  
+            env_variables+=("$OPTARG");;
+      esac
+    done
+    shift $((OPTIND-1))
+    unset OPTIND
+    unset OPTARG
+    local user_name=$1
+    local script_file=$2
+    local module_root="$( cd "$( dirname "${BASH_SOURCE[1]}" )" >/dev/null && pwd )"
+    local source=$(_psh_get_caller)
+    local env_variable_passthrough=""
+    for variable_name in "${env_variables[@]}"; do
+        env_variable_passthrough+="export ${variable_name}=\"\${${variable_name}}\"; "
+    done
+    local env_variable_passthrough=$(echo "${env_variable_passthrough}" | envsubst)
+    _psh_log_debug "source: ${source}"
+    _psh_log_debug "user_name: ${user_name}"
+    _psh_log_debug "env_variables: ${env_variables[@]}"
+    _psh_log_debug "script_file: ${script_file}"
+    _psh_log_debug "module_root: ${module_root}"
+    _psh_log_debug "env_variable_passthrough: ${env_variable_passthrough}"
+    _psh_log_info "executing ${script_file} as ${user_name}..."
+    su -l ${user_name} -c "\
+        export PROVISIONER_MAIN=${PROVISIONER_MAIN}; \
+        export PROVISIONER_LIBRARY=1; \
+        export PROVISIONER_LOG_BASE='${source}:_psh_execute_as[${user_name}]:'; \
+        export PROVISIONER_MODULE_ROOT='${module_root}'; \
+        ${env_variable_passthrough} \
+        bash ${module_root}/${script_file} \
+    "
+}
 
 
 # -----------------------------------------------------------
@@ -211,7 +267,7 @@ function _psh_load_module() {
     source $module_file
 
     local error_count=0
-    for func_name in ${_UPS_PHASES[*]}; do
+    for func_name in ${_PROVISIONER_PHASES[*]}; do
         local module_func_name=_psh_${module_name}_${func_name}
         if [ ! -n "$(type -t ${module_func_name})" ] || [ ! "$(type -t ${module_func_name})" = function ]; then
             _psh_log_error "invalid module: ${module_file}: API function not provided by module: ${module_func_name}"
@@ -228,26 +284,6 @@ function _psh_load_module() {
 
 
 # -----------------------------------------------------------
-# _psh_execute_as()
-# -----------------------------------------------------------
-
-function _psh_execute_as() {
-    local user_name=$1
-    local script_file=$2
-    local module_root="$( cd "$( dirname "${BASH_SOURCE[1]}" )" >/dev/null && pwd )"
-    local source="_psh_execute_as:"
-    _psh_log_info "executing ${script_file} as ${user_name}..."
-    su ${user_name} -c "\
-        export PROVISIONER_LIBRARY=1; \
-        export PROVISIONER_LOG_BASE='${source}:'; \
-        export PROVISIONER_MODULE_ROOT='${module_root}'; \
-        cd ${HOME}; \
-        bash ${module_root}/${script_file}\
-    "
-}
-
-
-# -----------------------------------------------------------
 # _psh_execute_phase()
 # -----------------------------------------------------------
 
@@ -256,7 +292,6 @@ function _psh_execute_phase() {
     _psh_log_info "============================================================================"
     _psh_log_info "${phase_name}"
     _psh_log_info "============================================================================"
-
     for module_name in ${PROVISIONER_LOADED_MODULES[*]}; do
         local module_func_name=_psh_${module_name}_${phase_name}
         _psh_log_info "---------------------------------------"
@@ -265,67 +300,41 @@ function _psh_execute_phase() {
         _psh_log_debug "invoking: ${module_func_name}"
         ${module_func_name}
     done
-
 }
-
-
-# -----------------------------------------------------------
-# load config
-# -----------------------------------------------------------
-
-if [[ -z ${PROVISIONER_LIBRARY} ]]; then 
-    _psh_log_info "============================================================================"
-    _psh_log_info "Provisioner.sh version ${PROVISIONER_VERSION} initializing..."
-    _psh_log_info "============================================================================"
-
-    _psh_log_info "Loading default configuration: ${PROVISIONER_DEFAULT_CONFIG_FILE}"
-    . ${PROVISIONER_DEFAULT_CONFIG_FILE}
-
-    _psh_log_debug "PROVISIONER_CONFIG_ROOT: ${PROVISIONER_CONFIG_ROOT}"
-    _psh_log_debug "PROVISIONER_CONFIG_FILE: ${PROVISIONER_CONFIG_FILE}"
-    _psh_log_debug "PROVISIONER_CONFIG_ASSETS_ROOT: ${PROVISIONER_CONFIG_ASSETS_ROOT}"
-    _psh_log_debug "PROVISIONER_CONFIG_CREDENTIALS_ROOT: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}"
-
-    _psh_log_info "Loading configuration file: ${PROVISIONER_CONFIG_FILE}"
-    . ${PROVISIONER_CONFIG_FILE}
-fi
 
 
 # -----------------------------------------------------------
 # _psh_main
 # -----------------------------------------------------------
 
-
 _psh_main() {
+    _psh_log_info "============================================================================"
+    _psh_log_info "Provisioner.sh version ${PROVISIONER_VERSION} initializing..."
+    _psh_log_info "============================================================================"
+    _psh_log_info "Loading default configuration: ${PROVISIONER_DEFAULT_CONFIG_FILE}"
+    source ${PROVISIONER_DEFAULT_CONFIG_FILE}
+    _psh_log_debug "PROVISIONER_CONFIG_ROOT: ${PROVISIONER_CONFIG_ROOT}"
+    _psh_log_debug "PROVISIONER_CONFIG_FILE: ${PROVISIONER_CONFIG_FILE}"
+    _psh_log_debug "PROVISIONER_CONFIG_ASSETS_ROOT: ${PROVISIONER_CONFIG_ASSETS_ROOT}"
+    _psh_log_debug "PROVISIONER_CONFIG_CREDENTIALS_ROOT: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}"
+    _psh_log_info "Loading configuration file: ${PROVISIONER_CONFIG_FILE}"
+    source ${PROVISIONER_CONFIG_FILE}
     _psh_log_debug "PROVISIONER_ROOT: $PROVISIONER_ROOT"
     _psh_log_debug "PROVISIONER_ENABLED_MODULES: ${PROVISIONER_ENABLED_MODULES[*]}"
-    
     for module_name in ${PROVISIONER_ENABLED_MODULES[*]}; do
         _psh_load_module $module_name
     done
-
     _psh_log_debug "PROVISIONER_LOADED_MODULES: ${PROVISIONER_LOADED_MODULES[*]}"
-
-    _psh_execute_phase configure
-
-    _psh_execute_phase validate
-
-    _psh_execute_phase pre_install
-
-    _psh_execute_phase setup
-
-    _psh_execute_phase verify
-
-    _psh_log_info "Provisioning completted without errors."
-
+    for phase_name in ${_PROVISIONER_PHASES[@]}; do
+        _psh_execute_phase $phase_name
+    done
+    _psh_log_info "Provisioning completted without errors. \o/"
 }
 
 
 # -----------------------------------------------------------
-# invocation
+# main invocation
 # -----------------------------------------------------------
-
-_strict-mode
 
 if [[ -z ${PROVISIONER_LIBRARY} ]]; then
     _psh_main "$@"

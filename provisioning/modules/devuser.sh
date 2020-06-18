@@ -15,6 +15,7 @@
 function _psh_devuser_configure() {
     SYSTEM_PACKAGES+=(
     )
+    DEVUSER_NAME="${DEVUSER_NAME:-dev}"
     DEVUSER_HOME=/home/${DEVUSER_NAME}
 }
 
@@ -77,7 +78,7 @@ function _psh_devuser_setup() {
         _psh_log_info "configuring authorized_keys..."
         cp /home/vagrant/.ssh/authorized_keys ${DEVUSER_HOME}/.ssh/authorized_keys
     else
-        _psh_log_warning "sktip: authorized_keys already exists"
+        _psh_log_notice "skip: authorized_keys already exists"
     fi
 
     chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${DEVUSER_HOME}/.ssh
@@ -88,7 +89,14 @@ function _psh_devuser_setup() {
     # invoking unprivilaged provisioner
     # -----------------------------------------------------------
     
-    _psh_execute_as ${DEVUSER_NAME} devuser-unprivileged.sh
+    _psh_execute_as \
+        -e DEVUSER_NAME \
+        -e DEVUSER_EMAIL \
+        -e DEVUSER_FULLNAME \
+        -e DEVUSER_PASSWORD \
+        -e DEVUSER_GID \
+        -e DEVUSER_UID \
+        ${DEVUSER_NAME} devuser-unprivileged.sh
 
 }
 

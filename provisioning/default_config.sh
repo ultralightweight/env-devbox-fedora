@@ -11,9 +11,6 @@
 # -----------------------------------------------------------
 # module config
 # -----------------------------------------------------------
-#
-# Please uncomment required module
-#
 
 export PROVISIONER_ENABLED_MODULES=(
     general
@@ -40,3 +37,4 @@ export SYSTEM_TIMEZONE=UTC
 
 export SYSTEM_PACKAGES=(
 )
+

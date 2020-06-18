@@ -123,8 +123,8 @@ EOF
                 ipsec-esp = _PLACEHOLDER_VPN_L2TP_IPSEC_ESP, \
                 ipsec-pfs = ${VPN_L2TP_IPSEC_PFS} \
             "
-        sed -i "s/_PLACEHOLDER_VPN_L2TP_IPSEC_IKE/${VPN_L2TP_IPSEC_IKE}/g" /etc/NetworkManager/system-connections/rokt_vpn.nmconnection
-        sed -i "s/_PLACEHOLDER_VPN_L2TP_IPSEC_ESP/${VPN_L2TP_IPSEC_ESP}/g" /etc/NetworkManager/system-connections/rokt_vpn.nmconnection
+        sed -i "s/_PLACEHOLDER_VPN_L2TP_IPSEC_IKE/${VPN_L2TP_IPSEC_IKE}/g" "/etc/NetworkManager/system-connections/${VPN_L2TP_NAME}.nmconnection"
+        sed -i "s/_PLACEHOLDER_VPN_L2TP_IPSEC_ESP/${VPN_L2TP_IPSEC_ESP}/g" "/etc/NetworkManager/system-connections/${VPN_L2TP_NAME}.nmconnection"
         systemctl restart NetworkManager
     else
         _psh_log_notice "skipped: Connection '${VPN_L2TP_NAME}' already exists."

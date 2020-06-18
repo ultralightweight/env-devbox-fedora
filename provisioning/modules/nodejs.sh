@@ -17,6 +17,10 @@ function _psh_nodejs_configure() {
         nodejs
         npm
     )
+    export NODEJS_NVM_VERSION=${NODEJS_NVM_VERSION:-0.33.11}
+    export NODEJS_VERSION=${NODEJS_VERSION:---lts}
+    export NODEJS_NVM_DOWNLOAD_URL=${NODEJS_NVM_DOWNLOAD_URL:-https://raw.githubusercontent.com/creationix/nvm/v${NODEJS_NVM_VERSION}/install.sh}
+    export NODEJS_PACKAGES=${NODEJS_PACKAGES:-}
 }
 
 
@@ -45,21 +49,23 @@ function _psh_nodejs_pre_install() {
 function _psh_nodejs_setup() {
 
     # -----------------------------------------------------------
-    # quick fix npm link
-    # -----------------------------------------------------------
-
-    # _psh_log_info "applying dirty npm link fix..."
-
-    # Granting write access to global node_modules directory to everybody,
-    # which is required for the `npm link` command to work from userland.
-    # This is not the best practice, but hey, it's nodejs! There is no best practice.
-    #  chmod a+w /usr/lib/node_modules
-
-    # -----------------------------------------------------------
     # unprivileged nvm install
     # -----------------------------------------------------------
 
-    _psh_execute_as ${DEVUSER_NAME} nodejs-unprivileged.sh
+    _psh_execute_as \
+        -e NODEJS_NVM_DOWNLOAD_URL \
+        -e NODEJS_VERSION \
+        ${DEVUSER_NAME} nodejs-unprivileged.sh
+
+
+    # -----------------------------------------------------------
+    # npm global package installation
+    # -----------------------------------------------------------
+
+    if [[ ! -z "${NODEJS_PACKAGES[@]}" ]]; then 
+        _psh_log_info "Installing global NodeJS packages: ${NODEJS_PACKAGES[@]}"
+        npm install -g "${NODEJS_PACKAGES[@]}"
+    fi
 
 }
 

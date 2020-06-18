@@ -16,7 +16,7 @@ function _psh_terraform_configure() {
     SYSTEM_PACKAGES+=(
         unzip
     )
-    TERRAFORM_VERSION=0.12.13
+    TERRAFORM_VERSION=${TERRAFORM_VERSION:-0.12.26}
     TERRAFORM_DOWNLOAD_PATH="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
 }
 
@@ -50,12 +50,12 @@ function _psh_terraform_setup() {
     # -----------------------------------------------------------
 
     _psh_log_info "Installing Terraform..."
-    if ! type terraform; then
+    if ! type terraform > /dev/null 2>&1; then
         local TERRAFORM_INSTALLER_DIR=/tmp/terraform-installer
         local TERRAFORM_INSTALLER=${TERRAFORM_INSTALLER_DIR}/terraform.zip
         _psh_log_info "Downloading terraform installer from: ${TERRAFORM_DOWNLOAD_PATH} to ${TERRAFORM_INSTALLER}"
         mkdir -pv ${TERRAFORM_INSTALLER_DIR}
-        curl ${TERRAFORM_DOWNLOAD_PATH} > ${TERRAFORM_INSTALLER}
+        curl -s ${TERRAFORM_DOWNLOAD_PATH} > ${TERRAFORM_INSTALLER}
         unzip -o ${TERRAFORM_INSTALLER} -d ${TERRAFORM_INSTALLER_DIR}
         mv -v ${TERRAFORM_INSTALLER_DIR}/terraform /usr/bin
     else

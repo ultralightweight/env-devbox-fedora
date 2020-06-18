@@ -3,7 +3,7 @@
 # package: ultralight provisioning system
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
-# file-version: 1.0
+# file-version: 1.1
 # file-purpose: devuser personalization executed as developer user
 # -----------------------------------------------------------------------------
 
@@ -13,6 +13,17 @@
 # -----------------------------------------------------------
 
 source ${PROVISIONER_MAIN}
+
+
+# -----------------------------------------------------------
+# constants
+# -----------------------------------------------------------
+
+KNOWN_HOSTS_FILE=~/.ssh/known_hosts
+KNOWN_HOSTS=(
+    "bitbucket.org"
+    "github.com"
+)
 
 
 # -----------------------------------------------------------
@@ -34,13 +45,6 @@ fi
 # -----------------------------------------------------------
 # ssh known-hosts
 # -----------------------------------------------------------
-
-KNOWN_HOSTS=(
-    "bitbucket.org"
-    "github.com"
-)
-
-KNOWN_HOSTS_FILE=~/.ssh/known_hosts
 
 _psh_log_info "adding known hosts to: ${KNOWN_HOSTS_FILE}"
 touch ${KNOWN_HOSTS_FILE}

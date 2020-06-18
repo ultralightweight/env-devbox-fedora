@@ -19,21 +19,23 @@ source ${PROVISIONER_MAIN}
 # setup project
 # -----------------------------------------------------------
 
-_psh_log_info "setting up project"
+_psh_log_warning "This module is currently broken, please do not use it."
 
-if [ ! -d ${DEVPROJECT_DIR} ]; then
-    git clone ${DEVPROJECT_GIT} ${DEVPROJECT_DIR}
-fi
+# _psh_log_info "setting up project"
 
-DEVPROJECT_SETUP_FILE=~/devproject_setup.sh
+# if [ ! -d ${DEVPROJECT_DIR} ]; then
+#     git clone ${DEVPROJECT_GIT} ${DEVPROJECT_DIR}
+# fi
 
-_psh_log_info "writing project setup script file: ${DEVPROJECT_SETUP_FILE}"
+# DEVPROJECT_SETUP_FILE=~/devproject_setup.sh
 
-echo -n "${DEVPROJECT_SETUP}" > ${DEVPROJECT_SETUP_FILE}
+# _psh_log_info "writing project setup script file: ${DEVPROJECT_SETUP_FILE}"
 
-_psh_log_info "executing devproject setup file: ${DEVPROJECT_SETUP_FILE}"
-source ${DEVPROJECT_SETUP_FILE}
+# echo -n "${DEVPROJECT_SETUP}" > ${DEVPROJECT_SETUP_FILE}
+
+# _psh_log_info "executing devproject setup file: ${DEVPROJECT_SETUP_FILE}"
+# source ${DEVPROJECT_SETUP_FILE}
 
 
-_psh_log_info "project ready"
+# _psh_log_info "project ready"
 

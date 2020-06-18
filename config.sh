@@ -41,7 +41,7 @@ export PROVISIONER_ENABLED_MODULES=(
     # ---------------------------
     python
     # golang
-    nodejs
+    # nodejs
 
     # ---------------------------
     # databases

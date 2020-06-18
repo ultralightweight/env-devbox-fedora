@@ -1,2 +1,2 @@
-timedatectl set-ntp false
-timedatectl set-ntp true
+sudo timedatectl set-ntp false
+sudo timedatectl set-ntp true

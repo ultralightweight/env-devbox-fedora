@@ -140,7 +140,7 @@ EOF
     _psh_log_info "setting up aws credentials..."
 
     if [[ ! -f ${AWS_CREDENTIALS_FILE} ]]; then
-        _ups_log_info "writing aws config file: ${AWS_CREDENTIALS_FILE}"
+        _psh_log_info "writing aws config file: ${AWS_CREDENTIALS_FILE}"
         cat > ${AWS_CREDENTIALS_FILE} <<EOF
 [default]
 aws_access_key_id = ${AWS_CREDENTIALS_ACCESS_KEY_ID}
@@ -165,22 +165,6 @@ EOF
 
     chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${DEVUSER_HOME}/.aws
     chmod 600 ${AWS_CONFIG_DIR}/*
-
-
-    # -----------------------------------------------------------
-    # role files
-    # -----------------------------------------------------------
-
-    # mkdir -p ${DEVUSER_HOME}/.ssh
-
-    # if [[ -d /vagrant/keys ]]; then
-    #     _psh_log_info "copying ssh keys..."
-    #     cp -v /vagrant/keys/* ${DEVUSER_HOME}/.ssh/
-    # else
-    #     _psh_log_warning "ssh keys are not found in the /vagrant/keys directory." >&2
-    # fi
-
-    # chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${AWS_CONFIG_DIR}
 
 }
 

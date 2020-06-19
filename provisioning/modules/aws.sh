@@ -117,7 +117,7 @@ function _psh_aws_setup() {
     # config
     # -----------------------------------------------------------
 
-    _psh_log_info "setting up aws configuration and credentials..."
+    _psh_log_info "setting up aws configuration..."
 
     mkdir -p ${AWS_CONFIG_DIR}
 
@@ -137,12 +137,30 @@ EOF
     # aws credentials
     # -----------------------------------------------------------
 
-    if [[ -d ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws ]]; then
-        _psh_log_info "copying aws credential files..."
+    _psh_log_info "setting up aws credentials..."
+
+    if [[ ! -f ${AWS_CREDENTIALS_FILE} ]]; then
+        _ups_log_info "writing aws config file: ${AWS_CREDENTIALS_FILE}"
+        cat > ${AWS_CREDENTIALS_FILE} <<EOF
+[default]
+aws_access_key_id = ${AWS_CREDENTIALS_ACCESS_KEY_ID}
+aws_secret_access_key = ${AWS_CREDENTIALS_SECRED_ACCESS_KEY}
+EOF
+    else
+        _psh_log_notice "skip: aws credentials file already exists: ${AWS_CREDENTIALS_FILE}"
+    fi
+
+
+    # -----------------------------------------------------------
+    # custom aws config
+    # -----------------------------------------------------------
+
+    if ls ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/* > /dev/null 2>&1; then
+        _psh_log_info "copying additional aws config files..."
         cp -rv ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/. ${AWS_CONFIG_DIR}/
         rm -fv ${AWS_CONFIG_DIR}/.placeholder
     else
-        _psh_log_warning "no aws credentials found in: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/"
+        _psh_log_warning "no additional aws config found in: ${PROVISIONER_CONFIG_CREDENTIALS_ROOT}/aws/"
     fi
 
     chown -R ${DEVUSER_NAME}:${DEVUSER_GID} ${DEVUSER_HOME}/.aws

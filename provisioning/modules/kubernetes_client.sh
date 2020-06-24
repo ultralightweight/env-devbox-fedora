@@ -21,6 +21,8 @@ function _psh_kubernetes_client_configure() {
     HELM3_VERSION=${HELM3_VERSION:-3.2.4}
     KUBERNETES_CLIENT_HELM2_DOWNLOAD_URL="https://get.helm.sh/helm-v${HELM2_VERSION}-linux-amd64.tar.gz"
     KUBERNETES_CLIENT_HELM3_DOWNLOAD_URL="https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz"
+    K9S_VERSION=${K9S_VERSION:-0.20.5}
+    KUBERNETES_CLIENT_K9s_DOWNLOAD_URL="https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz"
 }
 
 
@@ -95,6 +97,20 @@ function _psh_kubernetes_client_setup() {
     fi
 
 
+    # -----------------------------------------------------------
+    # k9s
+    # -----------------------------------------------------------
+
+    if ! type k9s >/dev/null 2>&1; then
+        _psh_log_info "installing k9s from: ${KUBERNETES_CLIENT_K9s_DOWNLOAD_URL}"
+        mkdir -p /tmp/k9s
+        curl -sS --location ${KUBERNETES_CLIENT_K9s_DOWNLOAD_URL} | tar xz -C /tmp/k9s
+        mv /tmp/k9s/linux-amd64/k9s ${KUBERNETES_CLIENT_BIN_DIR}
+        ln -s ${KUBERNETES_CLIENT_BIN_DIR}/helm3 ${KUBERNETES_CLIENT_BIN_DIR}/k9s
+        rm -rf /tmp/k9s
+    fi
+
+
 }
 
 
@@ -113,8 +129,11 @@ function _psh_kubernetes_client_verify() {
     type helm2
     helm2 version --client
 
+    type k9s
+    k9s version
 
 
+}
 
 
 

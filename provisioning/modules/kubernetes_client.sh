@@ -84,7 +84,7 @@ function _psh_kubernetes_client_setup() {
         mkdir -p /tmp/helm
         curl -sS --location ${KUBERNETES_CLIENT_HELM3_DOWNLOAD_URL} | tar xz -C /tmp/helm
         mv /tmp/helm/linux-amd64/helm ${KUBERNETES_CLIENT_BIN_DIR}/helm3
-        ln -s ${KUBERNETES_CLIENT_BIN_DIR}/helm ${KUBERNETES_CLIENT_BIN_DIR}/helm3
+        ln -sf ${KUBERNETES_CLIENT_BIN_DIR}/helm3 ${KUBERNETES_CLIENT_BIN_DIR}/helm
         rm -rf /tmp/helm
     fi
 

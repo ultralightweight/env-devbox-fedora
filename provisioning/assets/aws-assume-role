@@ -3,7 +3,7 @@
 # package: ultralight provisioning system
 # author: Daniel Kovacs <mondomhogynincsen@gmail.com>
 # licence: MIT <https://opensource.org/licenses/MIT>
-# file-version: 1.3
+# file-version: 1.5
 # file-purpose: aws assume role helper script
 # -----------------------------------------------------------------------------
 
@@ -21,12 +21,13 @@ local AWS_SESSION_NAME=$2
 if [[ -z "${AWS_SESSION_NAME}" ]]; then
     AWS_SESSION_NAME=session-from-${HOSTNAME}
 fi
+
 local AWS_ROLE_FILE=~/.aws/role_${AWS_ROLE_NAME}
 if [[ ! -f ${AWS_ROLE_FILE} ]]; then
     echo "error: role file not found: ${AWS_ROLE_FILE}" >&2
     return 2
 else
-    echo "creating aws session using role arn in file: ${AWS_ROLE_FILE} with session name: ${AWS_SESSION_NAME}" >&2
+    echo "aws-assume-role: creating session using role ARN in file: '${AWS_ROLE_FILE}' using session name: '${AWS_SESSION_NAME}'" >&2
 fi
 local AWS_ROLE_ARN=$(cat $AWS_ROLE_FILE)
 local PY_MAKE_VARS=$(cat <<EOF
@@ -46,12 +47,18 @@ python -c "${PY_MAKE_VARS}" < <(aws sts assume-role --role-arn ${AWS_ROLE_ARN} -
 }
 
 if [[ ! -z "${AWS_ASSUME_ROLE_INCLUDE_PROFILE}" ]]; then
-source ~/.bash_profile
+echo "aws-assume-role: loading profile..."
+set +e
+source /etc/profile
+set -e
+echo "aws-assume-role: profile loaded"
 fi
 
 if [[ -z "${AWS_ASSUME_ROLE}" ]]; then
 AWS_ASSUME_ROLE=$1
 fi
+
+echo "aws-assume-role: creating session..."
 
 AWS_ROLE_ENV=$(aws_assume_role ${AWS_ASSUME_ROLE})
 if [[ ! "$?" == "0" ]]; then
@@ -62,8 +69,8 @@ fi
 
 eval "${AWS_ROLE_ENV}"
 
-echo "success: session has been created and valid until: ${AWS_STS_EXPIRATION}"
-echo "type 'exit' when expired."
+echo "aws-assume-role: session has been created and valid until: ${AWS_STS_EXPIRATION}"
+echo "type 'exit' when session is expired."
 echo "" 
 
 unset aws_assume_role

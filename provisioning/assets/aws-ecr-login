@@ -10,5 +10,9 @@
 #AWS_DEFAULT_REGION=${1:-ap-southeast-2}
 AWS_DEFAULT_REGION=${1:-us-west-2}
 
+set -eEuo pipefail
+
+echo "aws-ecr-login: logging into docker in aws region: '${AWS_DEFAULT_REGION}'..."
+
 source <(aws ecr get-login --no-include-email --region ${AWS_DEFAULT_REGION})
 

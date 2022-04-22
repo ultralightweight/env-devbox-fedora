@@ -26,8 +26,11 @@ function _psh_aws_configure() {
     AWS_CONFIG_FILE=${AWS_CONFIG_DIR}/config
     AWS_CREDENTIALS_FILE=${AWS_CONFIG_DIR}/credentials
     AWS_BIN_DIR=${SYSTEM_BIN_DIR}
-    AWS_EKSCTL_DOWNLOAD_URL="https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz"
-    AWS_IAMAUTHENTICATOR_DOWNLOAD_URL=https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/aws-iam-authenticator
+    AWS_EKSCTL_VERSION="0.89.0"
+    AWS_EKSCTL_DOWNLOAD_URL="https://github.com/weaveworks/eksctl/releases/download/v${AWS_EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz"
+    # AWS_IAMAUTHENTICATOR_DOWNLOAD_URL=https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/aws-iam-authenticator
+    AWS_IAMAUTHENTICATOR_VERSION="0.5.5"
+    AWS_IAMAUTHENTICATOR_DOWNLOAD_URL="https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${AWS_IAMAUTHENTICATOR_VERSION}/aws-iam-authenticator_0.5.5_linux_amd64"
     AWS_CF_WATCH_DOWNLOAD_URL="https://raw.githubusercontent.com/alestic/aws-cloudformation-stack-status/master/aws-cloudformation-stack-status"
     AWS_HELPER_SCRIPTS=(
         aws-assume-role
@@ -68,7 +71,7 @@ function _psh_aws_setup() {
 
     if ! type eksctl >/dev/null 2>&1; then
         _psh_log_info "installing eksctrl from: ${AWS_EKSCTL_DOWNLOAD_URL}"
-        curl -sS --location ${AWS_EKSCTL_DOWNLOAD_URL} | tar xz -C /tmp
+        curl -sSL --location ${AWS_EKSCTL_DOWNLOAD_URL} | tar xz -C /tmp
         mv -v /tmp/eksctl ${AWS_BIN_DIR}
     fi
 
@@ -79,7 +82,7 @@ function _psh_aws_setup() {
 
     if ! type aws-iam-authenticator >/dev/null 2>&1; then
         _psh_log_info "installing aws-iam-authenticator from: ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}"
-        curl -sS -o aws-iam-authenticator ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}
+        curl -sSL -o aws-iam-authenticator ${AWS_IAMAUTHENTICATOR_DOWNLOAD_URL}
         chmod +x aws-iam-authenticator
         mv -v aws-iam-authenticator ${AWS_BIN_DIR}
     fi
@@ -91,7 +94,7 @@ function _psh_aws_setup() {
 
     if ! type aws-cloudformation-stack-status >/dev/null 2>&1; then
         _psh_log_info "installing aws-cloudformation-stack-status from: ${AWS_CF_WATCH_DOWNLOAD_URL}"
-        curl -sS -o aws-cloudformation-stack-status ${AWS_CF_WATCH_DOWNLOAD_URL}
+        curl -sSL -o aws-cloudformation-stack-status ${AWS_CF_WATCH_DOWNLOAD_URL}
         chmod +x aws-cloudformation-stack-status
         mv -v aws-cloudformation-stack-status ${AWS_BIN_DIR}
     fi

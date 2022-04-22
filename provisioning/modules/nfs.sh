@@ -53,6 +53,7 @@ function _psh_nfs_setup() {
 
     cat > /etc/exports <<EOF
 / *(rw,insecure,nohide,no_root_squash)
+/home/dev *(rw,insecure,nohide,no_root_squash)
 EOF
 
     # -----------------------------------------------------------

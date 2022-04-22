@@ -40,8 +40,9 @@ export PROVISIONER_ENABLED_MODULES=(
     # programming languages
     # ---------------------------
     python
-    # golang
-    nodejs
+    # dotnet
+    golang
+    # nodejs
 
     # ---------------------------
     # databases
@@ -52,20 +53,20 @@ export PROVISIONER_ENABLED_MODULES=(
     # ---------------------------
     # container support
     # ---------------------------
-    # docker
+    docker
     # lxc
 
     # ---------------------------
     # cloud support
     # ---------------------------
-    # aws
+    aws
     # gae
     # terraform
 
     # ---------------------------
     # kubernetes support
     # ---------------------------
-    # kubernetes_client
+    kubernetes_client
     # kubernetes_minikube
 
     # ---------------------------
@@ -98,6 +99,7 @@ export SYSTEM_TIMEZONE=UTC
 export SYSTEM_PACKAGES=(
 )
 
+export SYSTEM_SWAP_SIZE="4096"
 
 # -----------------------------------------------------------
 # dev user config
@@ -115,11 +117,17 @@ export DEVUSER_UID=501
 # aws config
 # -----------------------------------------------------------
 
-export AWS_CONFIG_REGION=
+export AWS_CONFIG_REGION=us-west-2
 export AWS_CONFIG_DEFAULT_FORMAT=json
 
 export AWS_CREDENTIALS_ACCESS_KEY_ID=
 export AWS_CREDENTIALS_SECRED_ACCESS_KEY=
+
+# -----------------------------------------------------------
+# helm config
+# -----------------------------------------------------------
+
+HELM3_VERSION="3.8.1"
 
 
 # -----------------------------------------------------------
@@ -127,6 +135,7 @@ export AWS_CREDENTIALS_SECRED_ACCESS_KEY=
 # -----------------------------------------------------------
 
 export PYTHON_PACKAGES=(
+    virtualenv
 )
 
 

@@ -21,13 +21,15 @@ function _psh_general_configure() {
         dnf-plugins-core
         mc
         telnet
+        # ntp
     )
-    SYSTEM_BIN_DIR=/usr/local/bin
-    SYSTEM_SWAP_FILE=${SYSTEM_SWAP_FILE:-/swap}
-    SYSTEM_SWAP_SIZE=${SYSTEM_SWAP_SIZE:-}
     SYSTEM_HELPER_SCRIPTS=(
         timesync
     )
+    SYSTEM_BIN_DIR=/usr/local/bin
+    SYSTEM_SWAP_SUBVOLUME=${SYSTEM_SWAP_SUBVOLUME:-/swap}
+    SYSTEM_SWAP_FILE=${SYSTEM_SWAP_FILE:-${SYSTEM_SWAP_SUBVOLUME}/swapfile0}
+    SYSTEM_SWAP_SIZE=${SYSTEM_SWAP_SIZE:-}
 }
 
 
@@ -36,7 +38,12 @@ function _psh_general_configure() {
 # -----------------------------------------------------------
 
 function _psh_general_validate() {
-    :
+    _psh_log_info "SYSTEM_PACKAGES='${SYSTEM_PACKAGES}'"
+    _psh_log_info "SYSTEM_HELPER_SCRIPTS='${SYSTEM_HELPER_SCRIPTS}'"
+    _psh_log_info "SYSTEM_BIN_DIR='${SYSTEM_BIN_DIR}'"
+    _psh_log_info "SYSTEM_SWAP_SUBVOLUME='${SYSTEM_SWAP_SUBVOLUME}'"
+    _psh_log_info "SYSTEM_SWAP_FILE='${SYSTEM_SWAP_FILE}'"
+    _psh_log_info "SYSTEM_SWAP_SIZE='${SYSTEM_SWAP_SIZE}'"
 }
 
 
@@ -72,19 +79,55 @@ function _psh_general_setup() {
     timedatectl set-timezone ${SYSTEM_TIMEZONE}
     timedatectl set-ntp true
 
+    # _psh_log_info "enabling and starting ntpd service..."
+    # systemctl enable ntpd
+    # systemctl start ntpd
+
+    _psh_log_info "enabling and starting timesyncd service..."
+    systemctl enable systemd-timesyncd
+    systemctl start systemd-timesyncd
+
+
+    # # -----------------------------------------------------------
+    # # swap
+    # # -----------------------------------------------------------
+    # if [[ ! -z "${SYSTEM_SWAP_SIZE}" && ! -z "${SYSTEM_SWAP_FILE}" ]]; then
+    #     _psh_log_info "configuring swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
+    #     if [[ ! -f "${SYSTEM_SWAP_FILE}" ]]; then
+    #         _psh_log_info "creating swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
+    #         dd if=/dev/zero of=${SYSTEM_SWAP_FILE} bs=1M count=5000
+    #         chown root:root ${SYSTEM_SWAP_FILE}
+    #         chmod 600 ${SYSTEM_SWAP_FILE}
+    #         mkswap ${SYSTEM_SWAP_FILE}
+    #         swapon ${SYSTEM_SWAP_FILE}
+    #     fi
+    #     if ! grep "${SYSTEM_SWAP_FILE}" /etc/fstab 2>&1 > /dev/null; then
+    #         _psh_log_info "appending swap file to fstab..."
+    #         echo "${SYSTEM_SWAP_FILE} swap                                                        swap    defaults        0 0" >> /etc/fstab
+    #     fi
+    # fi
 
     # -----------------------------------------------------------
     # swap
     # -----------------------------------------------------------
+    # origin: https://gist.github.com/eloylp/b0d64d3c947dbfb23d13864e0c051c67
+    # -----------------------------------------------------------
     if [[ ! -z "${SYSTEM_SWAP_SIZE}" && ! -z "${SYSTEM_SWAP_FILE}" ]]; then
         _psh_log_info "configuring swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
         if [[ ! -f "${SYSTEM_SWAP_FILE}" ]]; then
-            _psh_log_info "creating swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}"
+            _psh_log_info "creating swap subvolume: ${SYSTEM_SWAP_SUBVOLUME}..."
+            btrfs subvolume create /swap
+            _psh_log_info "creating swap file: ${SYSTEM_SWAP_FILE} size: ${SYSTEM_SWAP_SIZE}..."
+            touch ${SYSTEM_SWAP_FILE}
+            chattr +C ${SYSTEM_SWAP_FILE}  ## Needed to disable Copy On Write on the file.
             dd if=/dev/zero of=${SYSTEM_SWAP_FILE} bs=1M count=5000
+            _psh_log_info "configuring swap file: ${SYSTEM_SWAP_FILE}..."
             chown root:root ${SYSTEM_SWAP_FILE}
             chmod 600 ${SYSTEM_SWAP_FILE}
             mkswap ${SYSTEM_SWAP_FILE}
             swapon ${SYSTEM_SWAP_FILE}
+            _psh_log_info "swap file: ${SYSTEM_SWAP_FILE} configured"
+            free -h
         fi
         if ! grep "${SYSTEM_SWAP_FILE}" /etc/fstab 2>&1 > /dev/null; then
             _psh_log_info "appending swap file to fstab..."

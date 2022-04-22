@@ -17,15 +17,15 @@ function _psh_python_configure() {
         virtualenv
     )
 
-    PYTHON2_VERSION=${PYTHON2_VERSION:-2}
+    # PYTHON2_VERSION=${PYTHON2_VERSION:-2}
     PYTHON3_VERSION=${PYTHON3_VERSION:-3}
 
-    PYTHON2_PACKAGES+=( ${PYTHON_PACKAGES[@]} )
+    # PYTHON2_PACKAGES+=( ${PYTHON_PACKAGES[@]} )
     PYTHON3_PACKAGES+=( ${PYTHON_PACKAGES[@]} )
 
     SYSTEM_PACKAGES+=(
-        python${PYTHON2_VERSION}-devel
-        python${PYTHON2_VERSION}-pip
+        # python${PYTHON2_VERSION}-devel
+        # python${PYTHON2_VERSION}-pip
         python${PYTHON3_VERSION}-devel
         python${PYTHON3_VERSION}-pip
     )
@@ -65,9 +65,9 @@ function _setup_python() {
     _psh_log_info "Setting up Python version ${PYTHON_VERSION}"
 
     _psh_log_debug "PYTHON_MAJOR_VERSION=${PYTHON_MAJOR_VERSION}"
-    _psh_log_debug "PYTHON_VERSION=${PYTHON_MAJOR_VERSION}"
-    _psh_log_debug "PIP=${PYTHON_MAJOR_VERSION}"
-    _psh_log_debug "PIP_PACKAGES=${PYTHON_MAJOR_VERSION}"
+    _psh_log_debug "PYTHON_VERSION=${PYTHON_VERSION}"
+    _psh_log_debug "PIP=${PIP}"
+    _psh_log_debug "PIP_PACKAGES=${PIP_PACKAGES[@]}"
 
     # -----------------------------------------------------------
     # upgrade pip
@@ -82,8 +82,8 @@ function _setup_python() {
     # installing python packages
     # -----------------------------------------------------------
 
-    _psh_log_info "python-${PYTHON_VERSION}: installing python packages..."
-    ${PIP} install ${PIP_PACKAGES[@]}
+    _psh_log_info "python-${PYTHON_VERSION}: installing the following python packages: ${PIP_PACKAGES[@]}"
+    ${PIP} install --ignore-installed ${PIP_PACKAGES[@]}
 
 }
 
@@ -98,7 +98,7 @@ function _psh_python_setup() {
     # -----------------------------------------------------------
 
     _setup_python 3
-    _setup_python 2
+    # _setup_python 2
 
 }
 
@@ -108,8 +108,8 @@ function _psh_python_setup() {
 # -----------------------------------------------------------
 
 function _psh_python_verify() {
-    type python2
-    python2 --version
+    # type python2
+    # python2 --version
     type python3
     python3 --version
 }

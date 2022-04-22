@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   # config.vm.box = "generic/fedora28"
   # config.vm.box = "fedora/28-cloud-base"
-  config.vm.box = "fedora/31-cloud-base"
+  config.vm.box = "fedora/35-cloud-base"
   # config.vm.box = "fedora/32-beta-cloud-base"
 
   # Disable automatic box update checking. If you disable this, then
@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
   # config.vm.box_check_update = false
 
   # Hostname
-  config.vm.hostname = "devbox"
+  config.vm.hostname = "roktdevbox35"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "192.168.33.101"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -53,7 +53,6 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder ".", "/vagrant"
   # config.vm.synced_folder ".", "/vagrant", nfs: true
   # config.vm.synced_folder "./", "/home/vagrant/workdir", nfs: true
 
@@ -63,9 +62,11 @@ Vagrant.configure("2") do |config|
   #
   config.vm.provider "virtualbox" do |vb|
     # vb.memory = "512"
-    vb.memory = "1024"
+    # vb.memory = "1024"
     # vb.memory = "2048"
-    # vb.memory = "4096"
+    vb.memory = "4096"
+    # vb.memory = "6144"
+    # vb.memory = "8192"
     vb.cpus = 4
     # vb.customize ["storagectl", :id, "--name", "IDE Controller", "--remove"]
     # vb.customize ["storagectl", :id, "--name", "SATA Controller", "--add", "sata", "--portcount", 4, "--bootable", "on"]
@@ -78,9 +79,12 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    # export PROVISIONER_DEBUG=1
+    export PROVISIONER_DEBUG=1
     /vagrant/provisioning/provision.sh
   SHELL
   # config.vm.provision "shell", path: "provisioning/provision.sh"
+
+  # username
+  # config.ssh.username = "dev"
 
 end

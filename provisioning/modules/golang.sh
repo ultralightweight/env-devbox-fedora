@@ -16,9 +16,9 @@ function _psh_golang_configure() {
     SYSTEM_PACKAGES+=(
         go
     )
-    GOLANG_PACKAGES+=(
-        github.com/golang/protobuf/protoc-gen-go
-    )
+    # GOLANG_PACKAGES+=(
+    #     # github.com/golang/protobuf/protoc-gen-go
+    # )
 
 }
 
@@ -59,13 +59,13 @@ export GOPATH=$(go env GOPATH)
 EOF
     fi
 
-    # _psh_log_debug "VARIABLE=${VARIABLE}"
-    _psh_log_info "Installing GO packages..."
-    local GO_PACKAGE_NAME=
-    for GO_PACKAGE_NAME in ${GOLANG_PACKAGES[@]}; do
-        _psh_log_info "Installing GO package: ${GO_PACKAGE_NAME}"
-        go get ${GO_PACKAGE_NAME}
-    done
+    # # _psh_log_debug "VARIABLE=${VARIABLE}"
+    # _psh_log_info "Installing GO packages..."
+    # local GO_PACKAGE_NAME=
+    # for GO_PACKAGE_NAME in ${GOLANG_PACKAGES[@]}; do
+    #     _psh_log_info "Installing GO package: ${GO_PACKAGE_NAME}"
+    #     go get ${GO_PACKAGE_NAME}
+    # done
 
 }
 

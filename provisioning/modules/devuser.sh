@@ -76,7 +76,13 @@ function _psh_devuser_setup() {
 
     if [[ ! -f ${DEVUSER_HOME}/.ssh/authorized_keys ]]; then
         _psh_log_info "configuring authorized_keys..."
-        cp /home/vagrant/.ssh/authorized_keys ${DEVUSER_HOME}/.ssh/authorized_keys
+        if [[ -f /home/vagrant/.ssh/authorized_keys ]]; then 
+            cp -v /home/vagrant/.ssh/authorized_keys ${DEVUSER_HOME}/.ssh/authorized_keys
+        elif [[ -f /root/.ssh/authorized_keys ]]; then
+            cp -v /root/.ssh/authorized_keys ${DEVUSER_HOME}/.ssh/authorized_keys
+        else
+            _psh_log_warning "no authorized keys found either under vagrant or root user."
+        fi
     else
         _psh_log_notice "skip: authorized_keys already exists"
     fi

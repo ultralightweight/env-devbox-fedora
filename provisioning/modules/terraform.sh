@@ -17,7 +17,7 @@ function _psh_terraform_configure() {
         unzip
     )
     TERRAFORM_VERSION=${TERRAFORM_VERSION:-0.12.26}
-    TERRAFORM_DOWNLOAD_PATH="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+    TERRAFORM_DOWNLOAD_PATH="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${SYSTEM_ARCHITECTURE}.zip"
 }
 
 

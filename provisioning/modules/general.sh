@@ -63,6 +63,13 @@ function _psh_general_pre_install() {
 function _psh_general_setup() {
 
     # -----------------------------------------------------------
+    # setting hostname
+    # -----------------------------------------------------------
+    _psh_log_info "setting hostname to '${SYSTEM_HOSTNAME}'..."
+    hostnamectl set-hostname "${SYSTEM_HOSTNAME}"
+
+
+    # -----------------------------------------------------------
     # install packages
     # -----------------------------------------------------------
 

@@ -78,6 +78,16 @@ export PROVISIONER_ENABLED_MODULES=(
 
 
 # -----------------------------------------------------------
+# host name configuration
+# -----------------------------------------------------------
+#
+# Set the timezone for the VM
+#
+
+export SYSTEM_HOSTNAME="devbox"
+
+
+# -----------------------------------------------------------
 # time-zone configuration
 # -----------------------------------------------------------
 #
@@ -99,7 +109,7 @@ export SYSTEM_TIMEZONE=UTC
 export SYSTEM_PACKAGES=(
 )
 
-export SYSTEM_SWAP_SIZE="4096"
+export SYSTEM_SWAP_SIZE=""
 
 # -----------------------------------------------------------
 # dev user config

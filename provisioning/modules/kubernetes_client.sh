@@ -15,19 +15,20 @@
 function _psh_kubernetes_client_configure() {
     SYSTEM_PACKAGES+=(
         kubectl
+        helm
     )
     KUBERNETES_CLIENT_PROFILE="/etc/profile.d/kubernetes_client.sh"
     KUBERNETES_CLIENT_BIN_DIR="${KUBERNETES_CLIENT_BIN_DIR:-${SYSTEM_BIN_DIR}}"
     # HELM2_VERSION="${HELM2_VERSION:-2.16.10}"
-    HELM3_VERSION="${HELM3_VERSION:-3.8.1}"
-    # KUBERNETES_CLIENT_HELM2_DOWNLOAD_URL="https://get.helm.sh/helm-v${HELM2_VERSION}-linux-amd64.tar.gz"
-    KUBERNETES_CLIENT_HELM3_DOWNLOAD_URL="https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz"
-    K9S_VERSION="${K9S_VERSION:-0.25.18}"
-    KUBERNETES_CLIENT_K9s_DOWNLOAD_URL="https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz"
+    # HELM3_VERSION="${HELM3_VERSION:-3.8.1}"
+    # KUBERNETES_CLIENT_HELM2_DOWNLOAD_URL="https://get.helm.sh/helm-v${HELM2_VERSION}-linux-${SYSTEM_ARCHITECTURE_ALT}.tar.gz"
+    # KUBERNETES_CLIENT_HELM3_DOWNLOAD_URL="https://get.helm.sh/helm-v${HELM3_VERSION}-linux-${SYSTEM_ARCHITECTURE_ALT}.tar.gz"
+    K9S_VERSION="${K9S_VERSION:-0.26.3}"
+    KUBERNETES_CLIENT_K9s_DOWNLOAD_URL="https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${SYSTEM_ARCHITECTURE_ALT}.tar.gz"
     KUBECTX_VERSION="0.9.4"
-    KUBERNETES_CLIENT_KUBECTX_DOWNLOAD_URL="https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_x86_64.tar.gz"
+    KUBERNETES_CLIENT_KUBECTX_DOWNLOAD_URL="https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_${SYSTEM_ARCHITECTURE_ALT}.tar.gz"
     KUBENS_VERSION="0.9.4"
-    KUBERNETES_CLIENT_KUBENS_DOWNLOAD_URL="https://github.com/ahmetb/kubectx/releases/download/v${KUBENS_VERSION}/kubens_v${KUBENS_VERSION}_linux_x86_64.tar.gz"
+    KUBERNETES_CLIENT_KUBENS_DOWNLOAD_URL="https://github.com/ahmetb/kubectx/releases/download/v${KUBENS_VERSION}/kubens_v${KUBENS_VERSION}_linux_${SYSTEM_ARCHITECTURE_ALT}.tar.gz"
 }
 
 
@@ -57,7 +58,7 @@ function _psh_kubernetes_client_pre_install() {
         cat > ${repo_file} <<EOF
 [kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-${SYSTEM_ARCHITECTURE}
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
@@ -92,20 +93,20 @@ EOF
     # helm
     # -----------------------------------------------------------
 
-    if ! type helm3 >/dev/null 2>&1; then
-        _psh_log_info "installing helm3 from: ${KUBERNETES_CLIENT_HELM3_DOWNLOAD_URL}"
-        mkdir -p /tmp/helm
-        curl -sS --location ${KUBERNETES_CLIENT_HELM3_DOWNLOAD_URL} | tar xz -C /tmp/helm
-        mv /tmp/helm/linux-amd64/helm ${KUBERNETES_CLIENT_BIN_DIR}/helm3
-        ln -sf ${KUBERNETES_CLIENT_BIN_DIR}/helm3 ${KUBERNETES_CLIENT_BIN_DIR}/helm
-        rm -rf /tmp/helm
-    fi
+    # if ! type helm3 >/dev/null 2>&1; then
+    #     _psh_log_info "installing helm3 from: ${KUBERNETES_CLIENT_HELM3_DOWNLOAD_URL}"
+    #     mkdir -p /tmp/helm
+    #     curl -sS --location ${KUBERNETES_CLIENT_HELM3_DOWNLOAD_URL} | tar xz -C /tmp/helm
+    #     mv /tmp/helm/linux-${SYSTEM_ARCHITECTURE}/helm ${KUBERNETES_CLIENT_BIN_DIR}/helm3
+    #     ln -sf ${KUBERNETES_CLIENT_BIN_DIR}/helm3 ${KUBERNETES_CLIENT_BIN_DIR}/helm
+    #     rm -rf /tmp/helm
+    # fi
 
     # if ! type helm2 >/dev/null 2>&1; then
     #     _psh_log_info "installing helm2 from: ${KUBERNETES_CLIENT_HELM2_DOWNLOAD_URL}"
     #     mkdir -p /tmp/helm
     #     curl -sS --location ${KUBERNETES_CLIENT_HELM2_DOWNLOAD_URL} | tar xz -C /tmp/helm
-    #     mv /tmp/helm/linux-amd64/helm ${KUBERNETES_CLIENT_BIN_DIR}/helm2
+    #     mv /tmp/helm/linux-${SYSTEM_ARCHITECTURE}/helm ${KUBERNETES_CLIENT_BIN_DIR}/helm2
     #     rm -rf /tmp/helm2
     # fi
 
@@ -169,14 +170,20 @@ function _psh_kubernetes_client_verify() {
     type kubectl
     kubectl version --client
 
-    type helm3
-    helm3 version --client
+    type helm
+    helm version --client
 
     # type helm2
     # helm2 version --client
 
     type k9s
     k9s version
+
+    type kubectx
+    kubectx --version
+
+    type kubens
+    kubens --version
 
 
 }

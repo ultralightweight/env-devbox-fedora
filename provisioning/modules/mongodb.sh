@@ -50,7 +50,7 @@ function _psh_mongodb_pre_install() {
         cat > $repo_file <<EOF
 [Mongodb]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/4.0/x86_64/
+baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/4.0/${SYSTEM_ARCHITECTURE}/
 gpgcheck=1
 enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc

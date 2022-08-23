@@ -64,6 +64,10 @@ EOF
     systemctl start rpcbind nfs-server
     systemctl enable rpcbind nfs-server
 
+    _psh_log_info "adding NFS server to the firewall rules..."
+    firewall-cmd --add-service={nfs3,mountd,rpc-bind}
+    _psh_log_info "making firewall rule changes permanent..."
+    firewall-cmd --runtime-to-permanent
 }
 
 
